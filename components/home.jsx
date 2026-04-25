@@ -350,9 +350,18 @@ function StoryBlock() {
     <section>
       <div className="wrap">
         <div className="grid grid-2" style={{ gap: 64, alignItems: 'center' }}>
-          <div className="placeholder" style={{ aspectRatio: '4/5', minHeight: 480 }}>
-            Garmon family portrait — Kelley + 3 daughters
-          </div>
+          <img src="assets/garmon-family-portrait.jpg"
+            alt="Johnnie Garmon with Kelley and their three daughters on the front steps"
+            style={{
+              width: '100%',
+              aspectRatio: '4/5',
+              minHeight: 480,
+              objectFit: 'cover',
+              objectPosition: 'center 35%',
+              borderRadius: 4,
+              display: 'block',
+              boxShadow: 'var(--shadow)',
+            }} />
           <div>
             <Eyebrow>The story</Eyebrow>
             <h2 className="h-1" style={{ marginTop: 16 }}>
