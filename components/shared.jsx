@@ -124,7 +124,7 @@ function Nav({ route, days }) {
 function Footer() {
   return (
     <footer style={{
-      background: 'var(--navy-deep)', color: 'rgba(255,255,255,0.78)',
+      background: 'var(--crimson)', color: 'rgba(255,255,255,0.78)',
       paddingTop: 72, paddingBottom: 32, marginTop: 80,
     }}>
       <div className="wrap">
