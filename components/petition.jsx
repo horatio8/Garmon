@@ -2,32 +2,30 @@
 const { useState, useEffect } = React;
 
 const SAMPLE_NAMES = [
-  'Mary Pinckney · 29412', 'Robert Holcombe · 29455', 'Elise Boag · 29438',
-  'Walter J. McKinley · 29412', 'Patricia Simmons · 29455', 'Henry Ravenel · 29487',
-  'Carol Wieters · 29455', 'Daniel C. Pratt · 29412', 'Susan Heyward · 29438',
-  'James W. Lockwood · 29412', 'Ann-Marie Coker · 29455', 'Beau Stoney · 29412',
-  'Margaret Bailey · 29438', 'Thomas Hartnett · 29412', 'Linda Pringle · 29455',
-  'Charles E. Limehouse · 29455', 'Helen Whaley · 29412', 'Bradford Hutson · 29487',
-  'Joan Mikell · 29412', 'Edward Royall · 29455', 'Frances Vanderhorst · 29438',
-  'Robert P. Sumner · 29412', 'Caroline Drayton · 29455', 'Alfred Manigault · 29412',
-  'Beth Calhoun · 29438', 'Stephen Rivers · 29412', 'Mildred Bonneau · 29455',
-  'Joseph C. Pinckney · 29412', 'Hannah Postell · 29438', 'Wesley Snowden · 29487',
-  'Patrick Murray · 29412', 'Sarah Mikell-Pope · 29455', 'Lawrence Heyward · 29438',
-  'Cynthia Wragg · 29412', 'Richard Ball · 29412', 'Eleanor Trenholm · 29455',
+  'Mary', 'Robert', 'Elise', 'Walter', 'Patricia', 'Henry',
+  'Carol', 'Daniel', 'Susan', 'James', 'Ann-Marie', 'Beau',
+  'Margaret', 'Thomas', 'Linda', 'Charles', 'Helen', 'Bradford',
+  'Joan', 'Edward', 'Frances', 'Robert', 'Caroline', 'Alfred',
+  'Beth', 'Stephen', 'Mildred', 'Joseph', 'Hannah', 'Wesley',
+  'Patrick', 'Sarah', 'Lawrence', 'Cynthia', 'Richard', 'Eleanor',
 ];
 
+function firstNameOf(full) {
+  return (full || '').trim().split(/\s+/)[0] || 'Anonymous';
+}
+
 function PetitionPage({ showToast }) {
-  const [signed, setSigned] = useState(false);
+  const [pledged, setPledged] = useState(false);
   const [count, setCount] = useState(847);
-  const [form, setForm] = useState({ name: '', zip: '', email: '', phone: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '' });
   const [recent, setRecent] = useState(SAMPLE_NAMES);
 
   const submit = (e) => {
     e.preventDefault();
-    setRecent([`${form.name} · ${form.zip}`, ...recent]);
+    setRecent([firstNameOf(form.name), ...recent]);
     setCount(c => c + 1);
-    setSigned(true);
-    showToast('You\'re on the wall. Welcome to the team.');
+    setPledged(true);
+    showToast('Pledge recorded. Welcome to the team.');
   };
 
   const pct = Math.min(100, (count / 1500) * 100);
@@ -57,7 +55,7 @@ function PetitionPage({ showToast }) {
           {/* FORM */}
           <div className="sticky-aside" data-sticky style={{ position: 'sticky', top: 120, alignSelf: 'start' }}>
             <div className="card" style={{ padding: 36, borderTop: '4px solid var(--crimson)' }}>
-              {!signed ? (
+              {!pledged ? (
                 <form onSubmit={submit}>
                   <h2 className="h-3">Pledge my vote.</h2>
                   <p className="small" style={{ margin: '6px 0 24px' }}>Twelve seconds. No credit card. No follow-up calls unless you ask. Your pledge covers the June 9 primary and the November general.</p>
@@ -65,24 +63,20 @@ function PetitionPage({ showToast }) {
                   <div className="col" style={{ gap: 14 }}>
                     <div className="field"><label>Full name *</label>
                       <input required type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Mary Pinckney" />
+                      <span className="help">Only your first name appears on the public pledge wall.</span>
                     </div>
-                    <div className="grid grid-2" style={{ gap: 14 }}>
-                      <div className="field"><label>ZIP *</label>
-                        <input required type="text" pattern="[0-9]{5}" value={form.zip} onChange={e => setForm({ ...form, zip: e.target.value })} placeholder="29412" />
-                      </div>
-                      <div className="field"><label>Email *</label>
-                        <input required type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="you@email.com" />
-                      </div>
+                    <div className="field"><label>Email *</label>
+                      <input required type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="you@email.com" />
                     </div>
                     <div className="field"><label>Phone (optional)</label>
                       <input type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="(843) 555-0115" />
                       <span className="help">Used only for primary-day reminders. Never sold.</span>
                     </div>
 
-                    <button className="btn btn-primary btn-full btn-lg" type="submit">I'm in →</button>
+                    <button className="btn btn-primary btn-full btn-lg" type="submit">Pledge my vote →</button>
 
                     <p className="fineprint" style={{ margin: 0 }}>
-                      By pledging, your name will appear publicly. You agree to receive campaign updates. Paid for by the Committee to Elect Johnnie Garmon.
+                      By pledging, your first name will appear publicly. You agree to receive campaign updates. Paid for by the Committee to Elect Johnnie Garmon.
                     </p>
                   </div>
                 </form>
@@ -95,7 +89,7 @@ function PetitionPage({ showToast }) {
                     fontSize: 28, fontWeight: 600,
                   }}>✓</div>
                   <h3 className="h-3" style={{ marginTop: 16 }}>You're pledge #{count.toLocaleString()}.</h3>
-                  <p style={{ marginTop: 12, color: 'var(--ink-2)' }}>Find your name on the wall below — it's already there.</p>
+                  <p style={{ marginTop: 12, color: 'var(--ink-2)' }}>Look for your first name on the wall below — it's already there.</p>
                   <div style={{ marginTop: 20, display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
                     <button className="btn btn-primary" onClick={() => navigate('/donate')}>Chip in $25 →</button>
                     <button className="btn btn-secondary" onClick={() => navigate('/volunteer')}>Volunteer instead</button>
@@ -147,7 +141,7 @@ function PetitionPage({ showToast }) {
                     color: 'var(--ink-2)',
                     display: 'flex', alignItems: 'center', gap: 12,
                     fontFamily: 'var(--serif)',
-                    background: i === 0 && signed ? 'rgba(201,169,97,0.12)' : 'transparent',
+                    background: i === 0 && pledged ? 'rgba(201,169,97,0.12)' : 'transparent',
                   }}>
                     <span style={{ color: 'var(--ink-3)', fontFamily: 'var(--mono)', fontSize: 11, minWidth: 36 }}>
                       #{(count - i).toString().padStart(4, '0')}

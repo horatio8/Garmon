@@ -194,7 +194,7 @@ const PILLARS = [
   { n: '02', tag: 'Property tax', title: 'Reduce the 6.2% Tax.', body: 'Long-time residents have earned a place to stand. We won\'t tax them out of the homes they built.' },
   { n: '03', tag: 'Growth', title: 'Concurrency or Bust.', body: 'No new subdivisions where the schools, roads, and stormwater can\'t keep up. Build infrastructure first.' },
   { n: '04', tag: 'Healthcare', title: 'Aging at Home.', body: 'From advanced directives to in-home care, end-of-life can\'t stay a bureaucratic afterthought.' },
-  { n: '05', tag: 'Small biz', title: 'Defend Main Street.', body: 'Dram shop reform, permit accountability, and no unfunded mandates dumped on counties.' },
+  { n: '05', tag: 'Business', title: 'Defend Main Street.', body: 'Dram shop reform, permit accountability, and no unfunded mandates dumped on counties.' },
   { n: '06', tag: 'Education', title: 'Choice and Transparency.', body: 'Parental control, transparent funding, and no DEI mandates inside K–12 classrooms.' },
 ];
 
@@ -269,14 +269,13 @@ function PillarCard({ p, idx, cardStyle, showGold }) {
 
 /* ── COUNTER BLOCK ───────────────────────────────────────────── */
 function CounterBlock({ showToast, showGold }) {
-  const [zip, setZip] = useState('');
   const [email, setEmail] = useState('');
 
   const submit = (e) => {
     e.preventDefault();
-    if (!email || !zip) return;
+    if (!email) return;
     showToast('Pledge recorded. Welcome to the team.');
-    setZip(''); setEmail('');
+    setEmail('');
   };
 
   return (
@@ -310,18 +309,13 @@ function CounterBlock({ showToast, showGold }) {
               <div className="field">
                 <label htmlFor="petname">Full name</label>
                 <input id="petname" type="text" placeholder="Mary Pinckney" required />
+                <span className="help">Only your first name appears on the public pledge wall.</span>
               </div>
-              <div className="grid grid-2" style={{ gap: 14 }}>
-                <div className="field">
-                  <label htmlFor="petzip">ZIP</label>
-                  <input id="petzip" type="text" pattern="[0-9]{5}" placeholder="29412" value={zip} onChange={e => setZip(e.target.value)} required />
-                </div>
-                <div className="field">
-                  <label htmlFor="petemail">Email</label>
-                  <input id="petemail" type="email" placeholder="you@email.com" value={email} onChange={e => setEmail(e.target.value)} required />
-                </div>
+              <div className="field">
+                <label htmlFor="petemail">Email</label>
+                <input id="petemail" type="email" placeholder="you@email.com" value={email} onChange={e => setEmail(e.target.value)} required />
               </div>
-              <button className="btn btn-primary btn-full btn-lg" type="submit">I'm in →</button>
+              <button className="btn btn-primary btn-full btn-lg" type="submit">Pledge my vote →</button>
               <p className="fineprint" style={{ margin: 0 }}>By pledging, you agree to be added to the campaign list. We'll never share your info.</p>
             </div>
           </form>

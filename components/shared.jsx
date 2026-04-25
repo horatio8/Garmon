@@ -138,13 +138,14 @@ function Nav({ route, days }) {
 function Footer() {
   return (
     <footer style={{
-      background: 'var(--crimson)', color: 'rgba(255,255,255,0.78)',
+      background: 'linear-gradient(180deg, #C8242F 0%, #7A1019 100%)',
+      color: 'rgba(255,255,255,0.78)',
       paddingTop: 72, paddingBottom: 32, marginTop: 80,
     }}>
       <div className="wrap">
         <div className="grid grid-4" style={{ gap: 48 }}>
           <div style={{ gridColumn: 'span 2' }}>
-            <Logo size={28} white />
+            <Logo size={56} white />
             <p style={{ marginTop: 24, maxWidth: 380, color: 'rgba(255,255,255,0.7)', fontSize: 15 }}>
               A campaign about doing the work, keeping the promises, and protecting what makes
               the Lowcountry the Lowcountry.

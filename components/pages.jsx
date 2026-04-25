@@ -181,7 +181,7 @@ function AboutPage() {
             </div>
             <div>
               <Eyebrow>The arc</Eyebrow>
-              <h2 className="h-2" style={{ marginTop: 12 }}>From Section 8 to small business owner.</h2>
+              <h2 className="h-2" style={{ marginTop: 12 }}>From Section 8 to business owner.</h2>
               <p style={{ marginTop: 16, color: 'var(--ink-2)', fontSize: 17 }}>
                 Johnnie was raised in subsidized housing in upstate South Carolina. He was the
                 first in his family to finish college, paying his way through the College of
@@ -241,7 +241,7 @@ const ISSUES = [
   { slug: 'property',   n: '02', tag: 'Property tax', title: 'Reduce the 6.2% Tax.', stance: 'Long-time residents have earned a place to stand.' },
   { slug: 'concurrency',n: '03', tag: 'Growth',      title: 'Concurrency or Bust.', stance: 'No subdivisions where the schools and roads can\'t keep up.' },
   { slug: 'healthcare', n: '04', tag: 'Healthcare',  title: 'Aging at Home.',       stance: 'Modernize advanced directives and in-home care.' },
-  { slug: 'small-biz',  n: '05', tag: 'Small biz',   title: 'Defend Main Street.',  stance: 'Dram shop reform and permit accountability.' },
+  { slug: 'small-biz',  n: '05', tag: 'Business',    title: 'Defend Main Street.',  stance: 'Dram shop reform and permit accountability.' },
   { slug: 'education',  n: '06', tag: 'Education',   title: 'Choice and Transparency.', stance: 'Parental control and transparent K–12 funding.' },
   { slug: 'character',  n: '07', tag: 'Place',       title: 'Lowcountry Character.', stance: 'Protect what makes the Lowcountry the Lowcountry.' },
   { slug: 'directives', n: '08', tag: 'End-of-life', title: 'Honor the Last Wish.', stance: 'Modernize advanced-directive law.' },
