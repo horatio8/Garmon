@@ -52,9 +52,9 @@ function PetitionPage({ showToast }) {
       </section>
 
       <section style={{ paddingTop: 0 }}>
-        <div className="wrap" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48 }}>
+        <div className="wrap split" style={{ '--split-gap': '48px' }}>
           {/* FORM */}
-          <div style={{ position: 'sticky', top: 120, alignSelf: 'start' }}>
+          <div className="sticky-aside" data-sticky style={{ position: 'sticky', top: 120, alignSelf: 'start' }}>
             <div className="card" style={{ padding: 36, borderTop: '4px solid var(--crimson)' }}>
               {!signed ? (
                 <form onSubmit={submit}>

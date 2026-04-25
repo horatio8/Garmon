@@ -35,34 +35,25 @@ function DonatePage({ t, showToast }) {
       </section>
 
       <section style={{ paddingTop: 56 }}>
-        <div className="wrap" style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: 40 }}>
+        <div className="wrap split" style={{ '--split-cols': '1.6fr 1fr', '--split-gap': '40px' }}>
           <div>
             {/* Stepper */}
-            <div style={{ display: 'flex', gap: 8, marginBottom: 28 }}>
+            <div className="stepper">
               {['Amount', 'Your info', 'Review'].map((label, i) => {
                 const n = i + 1;
                 const active = step === n;
                 const done = step > n;
                 return (
-                  <div key={label} style={{
-                    flex: 1, padding: '12px 16px',
+                  <div key={label} className="stepper-step" style={{
                     background: active ? 'var(--navy)' : done ? 'rgba(0,45,84,0.08)' : 'var(--paper-2)',
                     color: active ? 'var(--paper)' : done ? 'var(--navy)' : 'var(--ink-3)',
-                    borderRadius: 4,
-                    fontSize: 13, fontWeight: 600,
-                    letterSpacing: '0.06em', textTransform: 'uppercase',
-                    display: 'flex', alignItems: 'center', gap: 10,
-                    transition: 'all .2s ease',
                   }}>
-                    <span style={{
-                      width: 22, height: 22, borderRadius: '50%',
+                    <span className="stepper-num" style={{
                       background: active ? 'var(--crimson)' : done ? 'var(--navy)' : 'transparent',
                       color: 'var(--paper)',
-                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 12,
                       border: !active && !done ? '1px solid var(--ink-3)' : 'none',
                     }}>{done ? '✓' : n}</span>
-                    {label}
+                    <span className="stepper-label">{label}</span>
                   </div>
                 );
               })}
@@ -73,7 +64,7 @@ function DonatePage({ t, showToast }) {
                 <h2 className="h-3">Choose your amount</h2>
                 <p className="small" style={{ margin: '6px 0 22px' }}>Every contribution is reported to the FEC.</p>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+                <div className="amount-grid">
                   {presets.map(a => (
                     <button key={a} onClick={() => { setAmount(a); setCustom(''); }}
                       type="button"
@@ -92,7 +83,7 @@ function DonatePage({ t, showToast }) {
                   <input type="number" placeholder="Other"
                     value={custom} onChange={e => setCustom(e.target.value)}
                     style={{
-                      gridColumn: 'span 4',
+                      gridColumn: '1 / -1',
                       padding: '18px 16px',
                       border: '1px solid var(--hairline)',
                       borderRadius: 4,
@@ -206,7 +197,7 @@ function DonatePage({ t, showToast }) {
             )}
           </div>
 
-          <aside style={{ alignSelf: 'start', position: 'sticky', top: 120 }}>
+          <aside className="sticky-aside" data-sticky style={{ alignSelf: 'start', position: 'sticky', top: 120 }}>
             <div className="card" style={{ borderTop: '4px solid var(--crimson)', background: '#fff' }}>
               <Eyebrow>What it pays for</Eyebrow>
               <ul style={{ listStyle: 'none', padding: 0, margin: '14px 0 0', display: 'flex', flexDirection: 'column', gap: 12, fontSize: 14 }}>

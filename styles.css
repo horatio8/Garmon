@@ -346,8 +346,141 @@ hr.rule-thick {
 }
 @media (max-width: 600px) {
   .grid-3, .grid-4, .grid-2 { grid-template-columns: 1fr; }
-  :root { --gutter: 18px; }
-  section { padding: 48px 0; }
+  :root { --gutter: 16px; }
+  section { padding: 44px 0; }
+}
+
+/* ── Responsive split layouts (replaces inline gridTemplateColumns) ── */
+.split {
+  display: grid;
+  grid-template-columns: var(--split-cols, 1fr 1fr);
+  gap: var(--split-gap, 40px);
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .split { grid-template-columns: 1fr; gap: 28px; }
+  .split > .sticky-aside,
+  .split > [data-sticky] {
+    position: static !important;
+    top: auto !important;
+  }
+}
+
+/* ── Donate amount preset grid ── */
+.amount-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+@media (max-width: 600px) { .amount-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* ── Donate stepper ── */
+.stepper { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: nowrap; }
+.stepper-step {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all .2s ease;
+  min-width: 0;
+}
+.stepper-step .stepper-num {
+  width: 22px; height: 22px;
+  flex: 0 0 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+.stepper-step .stepper-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 720px) {
+  .stepper-step { padding: 10px 8px; font-size: 11px; gap: 6px; letter-spacing: 0.04em; justify-content: center; }
+  .stepper-step .stepper-num { width: 20px; height: 20px; flex-basis: 20px; font-size: 11px; }
+}
+@media (max-width: 480px) {
+  .stepper-step .stepper-label { display: none; }
+}
+
+/* ── Issues list rows ── */
+.issues-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 2fr auto;
+  gap: 24px;
+  padding: 28px;
+  align-items: center;
+  transition: background .15s ease;
+}
+@media (max-width: 900px) {
+  .issues-row {
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "num title"
+      "stance stance"
+      "cta cta";
+    gap: 8px 16px;
+    padding: 22px 18px;
+  }
+  .issues-row .issues-num   { grid-area: num; }
+  .issues-row .issues-title { grid-area: title; }
+  .issues-row .issues-stance { grid-area: stance; }
+  .issues-row .issues-cta   { grid-area: cta; justify-self: end; }
+}
+
+/* ── Events list rows ── */
+.event-row {
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: 24px;
+  padding: 24px 28px;
+  align-items: center;
+}
+@media (max-width: 720px) {
+  .event-row {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 20px;
+  }
+  .event-row .event-actions {
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    gap: 16px !important;
+    align-items: center !important;
+  }
+}
+
+/* ── Hero quote card escape margins, neutralized on mobile ── */
+@media (max-width: 600px) {
+  .hero-quote-card {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-top: -28px !important;
+  }
+}
+
+/* ── Mobile typography tightening ── */
+@media (max-width: 600px) {
+  .h-display { font-size: clamp(32px, 9vw, 56px); line-height: 1.02; letter-spacing: -0.025em; }
+  .h-1 { font-size: clamp(28px, 7.5vw, 44px); }
+  .h-2 { font-size: clamp(24px, 6vw, 36px); }
+  .h-3 { font-size: 20px; }
+  .lede { font-size: 17px; }
+  .card { padding: 20px; }
+}
+
+/* ── Sticky donate FAB — smaller / out-of-the-way on phones ── */
+@media (max-width: 600px) {
+  .sticky-donate {
+    right: 14px; bottom: 14px;
+    padding: 12px 18px;
+    font-size: 12px;
+  }
 }
 
 /* ── Modal ────────────────────────────────────────────────────── */

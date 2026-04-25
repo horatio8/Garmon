@@ -115,7 +115,7 @@ function Hero({ variant, tagline, bg, bgDeep, colorMode, showGold }) {
           </div>
 
           {/* RIGHT — visual */}
-          <div className="fade-up" style={{ position: 'relative', minHeight: 520 }}>
+          <div className="fade-up" style={{ position: 'relative' }}>
             {variant === 'photoLeft' && <HeroPhotoCard goldDot={goldDot} />}
             {variant === 'fullBleed' && <HeroPhotoCard goldDot={goldDot} />}
             {variant === 'split' && <HeroPhotoCard goldDot={goldDot} />}
@@ -166,7 +166,7 @@ function HeroPhotoCard({ goldDot }) {
           display: 'block',
           boxShadow: 'var(--shadow)',
         }} />
-      <div style={{
+      <div className="hero-quote-card" style={{
         background: 'var(--paper)',
         color: 'var(--ink)',
         padding: '20px 22px',

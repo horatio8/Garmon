@@ -102,16 +102,11 @@ function EventsPage({ showToast }) {
       <section style={{ paddingTop: 0 }}>
         <div className="wrap" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {EVENTS.map((e, i) => (
-            <article key={i} style={{
+            <article key={i} className="event-row" style={{
               background: '#fff',
               border: '1px solid var(--hairline)',
               borderLeft: e.tag === 'Featured' ? '4px solid var(--crimson)' : '4px solid var(--navy)',
               borderRadius: 4,
-              padding: '24px 28px',
-              display: 'grid',
-              gridTemplateColumns: '120px 1fr auto',
-              gap: 24,
-              alignItems: 'center',
             }}>
               <div>
                 <div style={{ fontSize: 11, color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{e.day}</div>
@@ -125,7 +120,7 @@ function EventsPage({ showToast }) {
                 <h3 className="h-4" style={{ fontFamily: 'var(--serif)', fontSize: 22 }}>{e.title}</h3>
                 <div style={{ fontSize: 14, color: 'var(--ink-2)', marginTop: 4 }}>{e.loc} · <span style={{ color: 'var(--ink-3)' }}>Hosted by {e.host}</span></div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div className="event-actions" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <button className="btn btn-primary btn-sm" onClick={() => setRsvp(e)}>RSVP</button>
                 <a href="#cal" className="small" style={{ color: 'var(--navy)', textAlign: 'center' }}>+ Calendar</a>
               </div>
@@ -277,24 +272,19 @@ function IssuesPage() {
             {ISSUES.map((it, i) => (
               <a key={it.slug} href={'#/issues/' + it.slug}
                 onClick={(e) => { e.preventDefault(); navigate('/issues/' + it.slug); }}
+                className="issues-row"
                 style={{
-                  display: 'grid',
-                  gridTemplateColumns: '80px 1fr 2fr auto',
-                  gap: 24,
-                  padding: '28px 28px',
                   borderBottom: i < ISSUES.length - 1 ? '1px solid var(--hairline-2)' : 'none',
-                  alignItems: 'center',
-                  transition: 'background .15s ease',
                 }}
                 onMouseEnter={(e) => e.currentTarget.style.background = 'var(--paper-2)'}
                 onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
-                <div className="serif" style={{ fontSize: 36, fontWeight: 600, color: 'var(--navy)', letterSpacing: '-0.04em', lineHeight: 1 }}>{it.n}</div>
-                <div>
+                <div className="serif issues-num" style={{ fontSize: 36, fontWeight: 600, color: 'var(--navy)', letterSpacing: '-0.04em', lineHeight: 1 }}>{it.n}</div>
+                <div className="issues-title">
                   <span className="pill">{it.tag}</span>
                   <h3 className="h-4" style={{ fontFamily: 'var(--serif)', fontSize: 22, marginTop: 8 }}>{it.title}</h3>
                 </div>
-                <p style={{ color: 'var(--ink-2)', fontSize: 15, margin: 0 }}>{it.stance}</p>
-                <div style={{ color: 'var(--crimson)', fontWeight: 600, fontSize: 13, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Read →</div>
+                <p className="issues-stance" style={{ color: 'var(--ink-2)', fontSize: 15, margin: 0 }}>{it.stance}</p>
+                <div className="issues-cta" style={{ color: 'var(--crimson)', fontWeight: 600, fontSize: 13, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Read →</div>
               </a>
             ))}
           </div>
@@ -342,7 +332,7 @@ function IssueDetail({ slug }) {
       </section>
 
       <section>
-        <div className="wrap" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 56 }}>
+        <div className="wrap split" style={{ '--split-cols': '2fr 1fr', '--split-gap': '56px' }}>
           <article>
             <Eyebrow>The story</Eyebrow>
             <p className="serif" style={{ fontSize: 24, fontWeight: 500, lineHeight: 1.45, color: 'var(--navy-deep)', marginTop: 12, fontStyle: 'italic' }}>
@@ -382,7 +372,7 @@ function IssueDetail({ slug }) {
             </div>
           </article>
 
-          <aside style={{ position: 'sticky', top: 120, alignSelf: 'start' }}>
+          <aside className="sticky-aside" data-sticky style={{ position: 'sticky', top: 120, alignSelf: 'start' }}>
             <div className="card">
               <Eyebrow>Move on this</Eyebrow>
               <h3 className="h-4" style={{ marginTop: 10, fontFamily: 'var(--serif)', fontSize: 22 }}>
@@ -461,7 +451,7 @@ function ContactPage() {
         </div>
       </section>
       <section style={{ paddingTop: 0 }}>
-        <div className="wrap" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40 }}>
+        <div className="wrap split" style={{ '--split-gap': '40px' }}>
           <div className="card">
             <Eyebrow>Press</Eyebrow>
             <p style={{ marginTop: 12, fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--navy)' }}>media@togetherwithgarmon.com</p>
