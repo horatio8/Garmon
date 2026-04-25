@@ -42,11 +42,12 @@ function PetitionPage({ showToast }) {
           <Eyebrow>The Public Record</Eyebrow>
           <h1 className="h-display" style={{ marginTop: 18 }}>
             Stand on the record.<br />
-            <span style={{ color: 'var(--crimson)' }}>Sign the petition.</span>
+            <span style={{ color: 'var(--crimson)' }}>Pledge my vote.</span>
           </h1>
           <p className="lede" style={{ marginTop: 22, maxWidth: 580, margin: '22px auto 0' }}>
-            "I support Johnnie Garmon for South Carolina House District 115." That's the
-            commitment. Your name appears on the public signature wall below.
+            "I'll vote for Johnnie Garmon for SC House District 115 in the June 9 Republican
+            primary and the November general election." That's the pledge. Your name appears
+            on the public pledge wall below.
           </p>
         </div>
       </section>
@@ -58,8 +59,8 @@ function PetitionPage({ showToast }) {
             <div className="card" style={{ padding: 36, borderTop: '4px solid var(--crimson)' }}>
               {!signed ? (
                 <form onSubmit={submit}>
-                  <h2 className="h-3">Add my name.</h2>
-                  <p className="small" style={{ margin: '6px 0 24px' }}>Twelve seconds. No credit card. No follow-up calls unless you ask.</p>
+                  <h2 className="h-3">Pledge my vote.</h2>
+                  <p className="small" style={{ margin: '6px 0 24px' }}>Twelve seconds. No credit card. No follow-up calls unless you ask. Your pledge covers the June 9 primary and the November general.</p>
 
                   <div className="col" style={{ gap: 14 }}>
                     <div className="field"><label>Full name *</label>
@@ -81,7 +82,7 @@ function PetitionPage({ showToast }) {
                     <button className="btn btn-primary btn-full btn-lg" type="submit">I'm in →</button>
 
                     <p className="fineprint" style={{ margin: 0 }}>
-                      By signing, your name will appear publicly. You agree to receive campaign updates. Paid for by the Committee to Elect Johnnie Garmon.
+                      By pledging, your name will appear publicly. You agree to receive campaign updates. Paid for by the Committee to Elect Johnnie Garmon.
                     </p>
                   </div>
                 </form>
@@ -93,7 +94,7 @@ function PetitionPage({ showToast }) {
                     borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: 28, fontWeight: 600,
                   }}>✓</div>
-                  <h3 className="h-3" style={{ marginTop: 16 }}>You're signature #{count.toLocaleString()}.</h3>
+                  <h3 className="h-3" style={{ marginTop: 16 }}>You're pledge #{count.toLocaleString()}.</h3>
                   <p style={{ marginTop: 12, color: 'var(--ink-2)' }}>Find your name on the wall below — it's already there.</p>
                   <div style={{ marginTop: 20, display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
                     <button className="btn btn-primary" onClick={() => navigate('/donate')}>Chip in $25 →</button>
@@ -113,7 +114,7 @@ function PetitionPage({ showToast }) {
                   <div className="serif" style={{ fontSize: 72, fontWeight: 600, lineHeight: 1, color: 'var(--paper)', marginTop: 10, fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.03em' }}>
                     <CountUp to={count} />
                   </div>
-                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 6 }}>signatures · goal 1,500 by June 9</div>
+                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 6 }}>pledges · goal 1,500 by June 9</div>
                 </div>
                 <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--crimson)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                   <span className="pulse-dot" style={{ width: 10, height: 10, background: 'var(--paper)', borderRadius: '50%' }} />
@@ -129,7 +130,7 @@ function PetitionPage({ showToast }) {
             </div>
 
             <div style={{ marginTop: 24 }}>
-              <Eyebrow>The signature wall</Eyebrow>
+              <Eyebrow>The pledge wall</Eyebrow>
               <div style={{
                 marginTop: 14,
                 background: '#fff',

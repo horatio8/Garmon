@@ -238,7 +238,7 @@ function AboutPage() {
 /* ── ISSUES OVERVIEW ─────────────────────────────────────────── */
 const ISSUES = [
   { slug: 'permitting', n: '01', tag: 'Permitting', title: 'Stop Stacking Paper.', stance: 'Demand 90-day permit deadlines and public throughput numbers.' },
-  { slug: 'property',   n: '02', tag: 'Property tax', title: 'Protect the 6% Rate.', stance: 'Long-time residents have earned a place to stand.' },
+  { slug: 'property',   n: '02', tag: 'Property tax', title: 'Reduce the 6.2% Tax.', stance: 'Long-time residents have earned a place to stand.' },
   { slug: 'concurrency',n: '03', tag: 'Growth',      title: 'Concurrency or Bust.', stance: 'No subdivisions where the schools and roads can\'t keep up.' },
   { slug: 'healthcare', n: '04', tag: 'Healthcare',  title: 'Aging at Home.',       stance: 'Modernize advanced directives and in-home care.' },
   { slug: 'small-biz',  n: '05', tag: 'Small biz',   title: 'Defend Main Street.',  stance: 'Dram shop reform and permit accountability.' },
@@ -380,7 +380,7 @@ function IssueDetail({ slug }) {
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 18 }}>
                 <button className="btn btn-primary btn-full" onClick={() => navigate('/donate')}>Donate</button>
-                <button className="btn btn-secondary btn-full" onClick={() => navigate('/petition')}>Sign petition</button>
+                <button className="btn btn-secondary btn-full" onClick={() => navigate('/petition')}>Pledge my vote</button>
                 <button className="btn btn-secondary btn-full" onClick={() => navigate('/volunteer')}>Volunteer</button>
               </div>
             </div>

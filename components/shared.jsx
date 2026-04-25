@@ -95,7 +95,7 @@ function Nav({ route, days }) {
                  transition: 'color .15s ease',
                }}>{it.label}</a>
           ))}
-          <button className="btn btn-secondary btn-sm" onClick={() => navigate('/petition')}>Sign Petition</button>
+          <button className="btn btn-secondary btn-sm" onClick={() => navigate('/petition')}>Pledge my vote</button>
           <button className="btn btn-primary btn-sm" onClick={() => navigate('/donate')}>Donate</button>
         </nav>
         <button className="show-nav" onClick={() => setOpen(!open)}
@@ -125,7 +125,7 @@ function Nav({ route, days }) {
                style={{ display: 'block', padding: '12px 0', fontSize: 16, borderBottom: '1px solid var(--hairline-2)' }}>{it.label}</a>
           ))}
           <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
-            <button className="btn btn-secondary btn-full" onClick={() => { navigate('/petition'); setOpen(false); }}>Sign Petition</button>
+            <button className="btn btn-secondary btn-full" onClick={() => { navigate('/petition'); setOpen(false); }}>Pledge my vote</button>
             <button className="btn btn-primary btn-full" onClick={() => { navigate('/donate'); setOpen(false); }}>Donate</button>
           </div>
         </div>
@@ -151,7 +151,7 @@ function Footer() {
             </p>
             <div style={{ marginTop: 24, display: 'flex', gap: 12 }}>
               <button className="btn btn-primary btn-sm" onClick={() => navigate('/donate')}>Donate</button>
-              <button onClick={() => navigate('/petition')} className="btn btn-sm" style={{ background: 'transparent', color: 'var(--paper)', border: '1px solid rgba(255,255,255,0.3)' }}>Sign petition</button>
+              <button onClick={() => navigate('/petition')} className="btn btn-sm" style={{ background: 'transparent', color: 'var(--paper)', border: '1px solid rgba(255,255,255,0.3)' }}>Pledge my vote</button>
             </div>
           </div>
           <div>

@@ -102,14 +102,14 @@ function Hero({ variant, tagline, bg, bgDeep, colorMode, showGold }) {
                 background: 'transparent', color: 'var(--paper)',
                 border: '1px solid rgba(255,255,255,0.4)',
               }}>
-                Sign the petition
+                Pledge my vote
               </button>
             </div>
 
             <div style={{ display: 'flex', gap: 32, marginTop: 48, flexWrap: 'wrap', alignItems: 'center' }}>
               <Stars count={5} color="var(--gold-soft)" />
               <div className="fineprint" style={{ color: 'rgba(255,255,255,0.7)' }}>
-                Joined by <strong style={{ color: 'var(--paper)' }}>847 neighbors</strong> on the petition · <strong style={{ color: 'var(--paper)' }}>312 donors</strong> · <strong style={{ color: 'var(--paper)' }}>1,940 doors knocked</strong>
+                Joined by <strong style={{ color: 'var(--paper)' }}>847 neighbors</strong> who've pledged their vote · <strong style={{ color: 'var(--paper)' }}>312 donors</strong> · <strong style={{ color: 'var(--paper)' }}>1,940 doors knocked</strong>
               </div>
             </div>
           </div>
@@ -191,7 +191,7 @@ function HeroPhotoCard({ goldDot }) {
 /* ── PILLARS GRID ────────────────────────────────────────────── */
 const PILLARS = [
   { n: '01', tag: 'Permitting', title: 'Stop Stacking Paper.', body: 'Demand 90-day permit deadlines, public throughput numbers, and accountability when agencies miss them.' },
-  { n: '02', tag: 'Property tax', title: 'Protect the 6% Rate.', body: 'Long-time residents have earned a place to stand. We won\'t tax them out of the homes they built.' },
+  { n: '02', tag: 'Property tax', title: 'Reduce the 6.2% Tax.', body: 'Long-time residents have earned a place to stand. We won\'t tax them out of the homes they built.' },
   { n: '03', tag: 'Growth', title: 'Concurrency or Bust.', body: 'No new subdivisions where the schools, roads, and stormwater can\'t keep up. Build infrastructure first.' },
   { n: '04', tag: 'Healthcare', title: 'Aging at Home.', body: 'From advanced directives to in-home care, end-of-life can\'t stay a bureaucratic afterthought.' },
   { n: '05', tag: 'Small biz', title: 'Defend Main Street.', body: 'Dram shop reform, permit accountability, and no unfunded mandates dumped on counties.' },
@@ -275,7 +275,7 @@ function CounterBlock({ showToast, showGold }) {
   const submit = (e) => {
     e.preventDefault();
     if (!email || !zip) return;
-    showToast('Petition signed. Welcome to the team.');
+    showToast('Pledge recorded. Welcome to the team.');
     setZip(''); setEmail('');
   };
 
@@ -286,25 +286,25 @@ function CounterBlock({ showToast, showGold }) {
           <div>
             <Eyebrow>Live</Eyebrow>
             <h2 className="h-1" style={{ marginTop: 16 }}>
-              Already <span style={{ color: 'var(--crimson)' }}>847 neighbors</span> have signed on.
+              Already <span style={{ color: 'var(--crimson)' }}>847 neighbors</span> have pledged their vote.
             </h2>
             <p className="lede" style={{ marginTop: 16, maxWidth: 480 }}>
-              The petition isn't a mailing-list trick. It's the public record of who is willing
-              to put their name behind this campaign before primary day.
+              The pledge isn't a mailing-list trick. It's the public record of neighbors who've
+              committed to vote for Johnnie in the June 9 primary and the November general.
             </p>
 
             <div className="grid grid-3" style={{ gap: 16, marginTop: 36 }}>
-              <CounterTile label="Petition signatures" target={847} cap={1500} accent="var(--crimson)" />
+              <CounterTile label="Vote pledges" target={847} cap={1500} accent="var(--crimson)" />
               <CounterTile label="Contributors" target={312} cap={500} accent="var(--navy)" />
               <CounterTile label="Doors knocked" target={1940} cap={5000} accent={showGold ? 'var(--gold)' : 'var(--navy-soft)'} />
             </div>
           </div>
 
           <form onSubmit={submit} className="card" style={{ padding: 32 }}>
-            <Eyebrow>Add your name</Eyebrow>
-            <h3 className="h-3" style={{ marginTop: 12 }}>Sign the petition.</h3>
+            <Eyebrow>Pledge your vote</Eyebrow>
+            <h3 className="h-3" style={{ marginTop: 12 }}>Pledge my vote.</h3>
             <p className="small" style={{ margin: '8px 0 22px' }}>
-              Takes 12 seconds. Your name goes on the public signature wall.
+              Takes 12 seconds. Your name goes on the public pledge wall.
             </p>
             <div className="col" style={{ gap: 14 }}>
               <div className="field">
@@ -322,7 +322,7 @@ function CounterBlock({ showToast, showGold }) {
                 </div>
               </div>
               <button className="btn btn-primary btn-full btn-lg" type="submit">I'm in →</button>
-              <p className="fineprint" style={{ margin: 0 }}>By signing, you agree to be added to the campaign list. We'll never share your info.</p>
+              <p className="fineprint" style={{ margin: 0 }}>By pledging, you agree to be added to the campaign list. We'll never share your info.</p>
             </div>
           </form>
         </div>
@@ -448,7 +448,7 @@ function ClosingCTA() {
         </p>
         <div style={{ marginTop: 36, display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
           <button className="btn btn-primary btn-lg" onClick={() => navigate('/donate')}>Donate</button>
-          <button className="btn btn-secondary btn-lg" onClick={() => navigate('/petition')}>Sign petition</button>
+          <button className="btn btn-secondary btn-lg" onClick={() => navigate('/petition')}>Pledge my vote</button>
           <button className="btn btn-secondary btn-lg" onClick={() => navigate('/volunteer')}>Volunteer</button>
         </div>
       </div>
