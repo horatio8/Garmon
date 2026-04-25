@@ -154,9 +154,18 @@ function StatLine({ k, v }) {
 function HeroPhotoCard({ goldDot }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <div className="placeholder" style={{ aspectRatio: '4/5', minHeight: 380 }}>
-        Garmon portrait — Lowcountry oak avenue, golden hour
-      </div>
+      <img src="assets/garmon-family.jpg"
+        alt="Johnnie Garmon with his wife and daughter on a Lowcountry boardwalk at golden hour"
+        style={{
+          width: '100%',
+          aspectRatio: '4/5',
+          minHeight: 380,
+          objectFit: 'cover',
+          objectPosition: 'center 20%',
+          borderRadius: 4,
+          display: 'block',
+          boxShadow: 'var(--shadow)',
+        }} />
       <div style={{
         background: 'var(--paper)',
         color: 'var(--ink)',
