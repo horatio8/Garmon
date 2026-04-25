@@ -13,7 +13,7 @@ function Logo({ size = 26, white = false }) {
     <a href="#/" onClick={(e) => { e.preventDefault(); navigate('/'); }}
        style={{ display: 'inline-flex', alignItems: 'center', lineHeight: 1, height: h }}>
       <img
-        src="assets/garmon-logo.jpeg"
+        src={white ? 'assets/garmon-logo-transparent.png' : 'assets/garmon-logo.jpeg'}
         alt="Johnnie Garmon for State House"
         style={{
           height: h,
