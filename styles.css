@@ -258,20 +258,25 @@ hr.rule-thick {
   position: fixed;
   right: 20px; bottom: 20px;
   z-index: 50;
-  background: var(--crimson);
-  color: var(--paper);
+  background: #fff;
+  color: var(--crimson);
+  border: 2px solid var(--crimson);
   border-radius: 999px;
-  padding: 14px 22px;
+  padding: 12px 20px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   font-size: 13px;
-  box-shadow: 0 12px 32px -8px rgba(204,32,39,0.5), 0 0 0 4px rgba(204,32,39,0.12);
+  box-shadow: 0 12px 32px -8px rgba(176,31,42,0.35), 0 2px 6px rgba(0,0,0,0.08);
   display: inline-flex; align-items: center; gap: 8px;
-  border: 0;
-  transition: transform .2s ease, box-shadow .2s ease;
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
 }
-.sticky-donate:hover { transform: translateY(-2px); }
+.sticky-donate:hover {
+  transform: translateY(-2px);
+  background: var(--crimson);
+  color: #fff;
+}
+.sticky-donate:hover .pulse-dot { background: #fff !important; }
 
 /* ── Animations ───────────────────────────────────────────────── */
 @keyframes fadeUp {
@@ -536,7 +541,19 @@ hr.rule-thick {
 .show-nav { display: none; }
 @media (max-width: 1080px) { .show-nav { display: block; } }
 
+/* ── Nav row (vertical padding scales with viewport) ─────────── */
+.nav-row { padding: 14px var(--gutter); }
+@media (max-width: 900px) { .nav-row { padding: 10px var(--gutter); } }
+@media (max-width: 600px) { .nav-row { padding: 8px var(--gutter); } }
+
 /* ── Endorsement bar ──────────────────────────────────────────── */
+.endorsement-bar {
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  background: var(--paper-2);
+  padding: 28px 0;
+}
+.endorsement-bar.is-compact { padding: 18px 0; }
 .endorsement-row {
   display: flex;
   align-items: center;
@@ -568,18 +585,23 @@ hr.rule-thick {
   white-space: nowrap;
 }
 @media (max-width: 900px) {
+  .endorsement-bar { padding: 18px 0; }
   .endorsement-row {
     justify-content: center;
     text-align: center;
     flex-direction: column;
-    gap: 14px;
+    gap: 8px;
   }
   .endorsement-list {
     justify-content: center;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
   }
   .endorsement-item {
     white-space: normal;
+    font-size: 15px;
   }
+}
+@media (max-width: 600px) {
+  .endorsement-bar { padding: 14px 0; }
 }

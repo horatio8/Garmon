@@ -78,9 +78,9 @@ function Nav({ route, days }) {
           </span>
         </div>
       </div>
-      <div className="wrap" style={{
+      <div className="wrap nav-row" style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '14px var(--gutter)', gap: 24,
+        gap: 24,
       }}>
         <Logo size={26} />
         <nav className="hide-nav" style={{ display: 'flex', gap: 22, alignItems: 'center' }}>
@@ -239,12 +239,7 @@ function EndorsementBar({ compact = false }) {
     'Gov. McMaster (Healthcare Comm.)',
   ];
   return (
-    <div style={{
-      borderTop: '1px solid var(--hairline)',
-      borderBottom: '1px solid var(--hairline)',
-      background: 'var(--paper-2)',
-      padding: compact ? '18px 0' : '28px 0',
-    }}>
+    <div className={'endorsement-bar' + (compact ? ' is-compact' : '')}>
       <div className="wrap endorsement-row">
         <div className="eyebrow endorsement-label">
           <span className="dot" style={{ background: 'var(--gold)' }} />
