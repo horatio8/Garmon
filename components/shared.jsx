@@ -48,7 +48,8 @@ function Eyebrow({ children, dot = true, color }) {
 }
 
 /* ── Top nav ─────────────────────────────────────────────────── */
-function Nav({ route, days }) {
+function Nav({ route, election }) {
+  const e = election || { label: 'Primary', dateStr: 'June 9, 2026', days: 0 };
   const [open, setOpen] = useState(false);
   const items = [
     { label: 'About',     path: '/about' },
@@ -71,10 +72,10 @@ function Nav({ route, days }) {
         <div className="wrap" style={{ display: 'flex', justifyContent: 'space-between', padding: '8px var(--gutter)', gap: 16, whiteSpace: 'nowrap' }}>
           <span style={{ flex: '0 1 auto', minWidth: 0 }}>
             <span style={{ color: '#FFE9A8' }}>●</span>{' '}
-            <strong>Primary:</strong> June 9, 2026
+            <strong>{e.label}:</strong> {e.dateStr}
           </span>
           <span className="hide-nav" style={{ flex: '0 0 auto' }}>
-            {days} days to go · HD‑115
+            {e.days === 0 ? 'Vote today · HD‑115' : `${e.days} day${e.days === 1 ? '' : 's'} to go · HD‑115`}
           </span>
         </div>
       </div>

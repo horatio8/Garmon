@@ -50,6 +50,18 @@ window.navigate = (path) => {
   window.scrollTo({ top: 0, behavior: 'instant' });
 };
 
+// Auto-rolling election countdown: primary first, then general.
+const ELECTIONS = [
+  { label: 'Primary', dateStr: 'June 9, 2026',     date: new Date(2026, 5, 9) },
+  { label: 'General', dateStr: 'November 3, 2026', date: new Date(2026, 10, 3) },
+];
+function getElectionInfo() {
+  const now = new Date();
+  const upcoming = ELECTIONS.find(e => e.date >= now) || ELECTIONS[ELECTIONS.length - 1];
+  const days = Math.max(0, Math.ceil((upcoming.date - now) / 86400000));
+  return { label: upcoming.label, dateStr: upcoming.dateStr, days };
+}
+
 function App() {
   const t = SITE_DEFAULTS;
   const [route, setRoute] = useState(getRoute());
@@ -70,7 +82,11 @@ function App() {
   }, [seenNewsletter]);
 
   const showToast = useCallback((msg) => setToast(msg), []);
-  const days = Math.max(1, Math.ceil((new Date('2026-06-09') - new Date()) / 86400000));
+  const [election, setElection] = useState(getElectionInfo);
+  useEffect(() => {
+    const id = setInterval(() => setElection(getElectionInfo()), 60_000);
+    return () => clearInterval(id);
+  }, []);
 
   // Donate is hosted externally (Anedot). If anyone lands on /#/donate
   // (old links, deep-linked share, etc.), bounce them to the live form.
@@ -93,7 +109,7 @@ function App() {
 
   return (
     <div data-screen-label={`Route ${route}`}>
-      <Nav route={route} days={days} />
+      <Nav route={route} election={election} />
       {page}
       <Footer />
 
