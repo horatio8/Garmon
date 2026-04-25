@@ -8,8 +8,8 @@ function HomePage({ t, showToast, openNewsletter }) {
   const issueStyle = t.issueStyle; // index / bold / photo
   const showGold = t.showGold;
 
-  const heroBg = '#B01F2A';
-  const heroBgDeep = '#B01F2A';
+  const heroBg = '#C8242F';
+  const heroBgDeep = '#7A1019';
 
   return (
     <main>
@@ -408,9 +408,18 @@ function EventTeaser() {
               <button onClick={() => navigate('/events')} className="btn" style={{ background: 'transparent', color: 'var(--paper)', border: '1px solid rgba(255,255,255,0.3)' }}>All events</button>
             </div>
           </div>
-          <div className="placeholder dark" style={{ aspectRatio: '5/4', minHeight: 320 }}>
-            Beach club deck at golden hour
-          </div>
+          <img src="assets/garmon-rally.jpg"
+            alt="Johnnie Garmon and supporters holding campaign signs at a rally"
+            style={{
+              width: '100%',
+              aspectRatio: '5/4',
+              minHeight: 320,
+              objectFit: 'cover',
+              objectPosition: 'center 30%',
+              borderRadius: 4,
+              display: 'block',
+              boxShadow: 'var(--shadow-lg)',
+            }} />
         </div>
       </div>
     </section>
