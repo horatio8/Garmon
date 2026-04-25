@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Together with Garmon — SC House District 115</title>
+<meta name="description" content="Johnnie Garmon for South Carolina House District 115. A better day tomorrow." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="app"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="components/shared.jsx"></script>
+<script type="text/babel" src="components/home.jsx"></script>
+<script type="text/babel" src="components/donate.jsx"></script>
+<script type="text/babel" src="components/petition.jsx"></script>
+<script type="text/babel" src="components/pages.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+const SITE_DEFAULTS = {
+  tagline: "Together with Garmon. A better day tomorrow.",
+  primaryCTA: "Donate",
+  heroVariant: "photoLeft",
+  colorMode: "balanced",
+  headlineSerif: "Source Serif 4",
+  density: "regular",
+  showGold: true,
+  endorsementStyle: "logos",
+};
+
+function getRoute() {
+  const h = window.location.hash.replace(/^#/, '') || '/';
+  return h.startsWith('/') ? h : '/' + h;
+}
+window.navigate = (path) => {
+  window.location.hash = path;
+  window.scrollTo({ top: 0, behavior: 'instant' });
+};
+
+function App() {
+  const t = SITE_DEFAULTS;
+  const [route, setRoute] = useState(getRoute());
+  const [toast, setToast] = useState('');
+  const [newsletter, setNewsletter] = useState(false);
+  const [seenNewsletter, setSeenNewsletter] = useState(false);
+
+  useEffect(() => {
+    const onHash = () => setRoute(getRoute());
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+
+  useEffect(() => {
+    if (seenNewsletter) return;
+    const id = setTimeout(() => { setNewsletter(true); setSeenNewsletter(true); }, 30000);
+    return () => clearTimeout(id);
+  }, [seenNewsletter]);
+
+  const showToast = useCallback((msg) => setToast(msg), []);
+  const days = Math.max(1, Math.ceil((new Date('2026-06-09') - new Date()) / 86400000));
+
+  let page;
+  if (route === '/') page = <HomePage t={t} showToast={showToast} openNewsletter={() => setNewsletter(true)} />;
+  else if (route === '/donate') page = <DonatePage t={t} showToast={showToast} />;
+  else if (route === '/petition') page = <PetitionPage showToast={showToast} />;
+  else if (route === '/volunteer') page = <VolunteerPage showToast={showToast} />;
+  else if (route === '/events') page = <EventsPage showToast={showToast} />;
+  else if (route === '/about') page = <AboutPage />;
+  else if (route === '/issues') page = <IssuesPage />;
+  else if (route.startsWith('/issues/')) page = <IssueDetail slug={route.split('/')[2]} />;
+  else if (route === '/news') page = <NewsPage />;
+  else if (route === '/contact') page = <ContactPage />;
+  else page = <HomePage t={t} showToast={showToast} openNewsletter={() => setNewsletter(true)} />;
+
+  return (
+    <div data-screen-label={`Route ${route}`}>
+      <Nav route={route} days={days} />
+      {page}
+      <Footer />
+
+      {route !== '/donate' && (
+        <button className="sticky-donate" onClick={() => navigate('/donate')}>
+          <span style={{ width: 8, height: 8, background: 'var(--paper)', borderRadius: '50%' }} className="pulse-dot" />
+          Donate
+        </button>
+      )}
+
+      <Toast msg={toast} onClose={() => setToast('')} />
+      <NewsletterModal open={newsletter} onClose={() => setNewsletter(false)}
+        onSubscribe={() => { setNewsletter(false); showToast('Subscribed. First letter sends Sunday.'); }} />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('app')).render(<App />);
+</script>
+</body>
+</html>
