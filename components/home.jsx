@@ -65,10 +65,9 @@ function Hero({ variant, tagline, bg, bgDeep, colorMode, showGold }) {
   const goldDot = showGold ? <span style={{ color: 'var(--gold)' }}>★</span> : null;
 
   return (
-    <section style={{
+    <section className="hero-section" style={{
       background: `linear-gradient(180deg, ${bg} 0%, ${bgDeep} 100%)`,
       color: 'var(--paper)',
-      padding: '72px 0 0',
       position: 'relative',
       overflow: 'hidden',
     }}>
@@ -83,7 +82,7 @@ function Hero({ variant, tagline, bg, bgDeep, colorMode, showGold }) {
       <div className="wrap" style={{ position: 'relative' }}>
         <div className="grid grid-2" style={{ gap: 56, alignItems: 'start' }}>
           {/* LEFT — message */}
-          <div className="fade-up" style={{ paddingTop: 24 }}>
+          <div className="fade-up hero-message">
             <Eyebrow color="var(--gold-soft)">Republican · SC House Dist. 115</Eyebrow>
             <h1 className="h-display" style={{ color: 'var(--paper)', marginTop: 22, lineHeight: 0.96 }}>
               {tagline}
@@ -95,7 +94,7 @@ function Hero({ variant, tagline, bg, bgDeep, colorMode, showGold }) {
             </p>
 
             <div style={{ display: 'flex', gap: 12, marginTop: 36, flexWrap: 'wrap' }}>
-              <button className="btn btn-primary btn-lg" onClick={() => navigate('/donate')}>
+              <button className="btn btn-donate-light btn-lg" onClick={() => navigate('/donate')}>
                 Donate to the campaign
               </button>
               <button onClick={() => navigate('/petition')} className="btn btn-lg" style={{
@@ -441,7 +440,7 @@ function ClosingCTA() {
           The June 9 primary will be decided by a few thousand neighbors. Pick the action that fits your week:
         </p>
         <div style={{ marginTop: 36, display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button className="btn btn-primary btn-lg" onClick={() => navigate('/donate')}>Donate</button>
+          <button className="btn btn-donate-light btn-lg" onClick={() => navigate('/donate')}>Donate</button>
           <button className="btn btn-secondary btn-lg" onClick={() => navigate('/petition')}>Pledge my vote</button>
           <button className="btn btn-secondary btn-lg" onClick={() => navigate('/volunteer')}>Volunteer</button>
         </div>

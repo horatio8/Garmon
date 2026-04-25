@@ -47,7 +47,8 @@ html, body {
   text-rendering: optimizeLegibility;
 }
 
-body { overflow-x: hidden; }
+html, body { overflow-x: hidden; max-width: 100%; }
+img, picture, video, canvas, svg { max-width: 100%; }
 
 a { color: inherit; text-decoration: none; }
 
@@ -323,6 +324,16 @@ hr.rule-thick {
     linear-gradient(180deg, var(--navy), var(--navy-deep));
   color: rgba(255,255,255,0.55);
 }
+.placeholder {
+  width: 100%;
+  max-width: 100%;
+}
+@media (max-width: 600px) {
+  .placeholder {
+    min-height: 0 !important;
+    height: auto;
+  }
+}
 .placeholder.crimson {
   background:
     repeating-linear-gradient(135deg,
@@ -540,6 +551,31 @@ hr.rule-thick {
 @media (max-width: 1080px) { .hide-nav { display: none !important; } }
 .show-nav { display: none; }
 @media (max-width: 1080px) { .show-nav { display: block; } }
+
+/* ── Hero (responsive top padding) ────────────────────────────── */
+.hero-section { padding: 72px 0 0; }
+.hero-message { padding-top: 24px; }
+@media (max-width: 900px) {
+  .hero-section { padding: 40px 0 0; }
+  .hero-message { padding-top: 8px; }
+}
+@media (max-width: 600px) {
+  .hero-section { padding: 24px 0 0; }
+  .hero-message { padding-top: 0; }
+}
+
+/* ── White-on-red Donate variant (homepage, not nav) ──────────── */
+.btn-donate-light {
+  background: #fff;
+  color: var(--crimson);
+  border: 2px solid var(--crimson);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 6px 18px -8px rgba(176,31,42,0.35);
+}
+.btn-donate-light:hover {
+  background: var(--crimson);
+  color: #fff;
+  transform: translateY(-1px);
+}
 
 /* ── Nav row (vertical padding scales with viewport) ─────────── */
 .nav-row { padding: 14px var(--gutter); }

@@ -50,36 +50,27 @@ window.navigate = (path) => {
   window.scrollTo({ top: 0, behavior: 'instant' });
 };
 
-// Auto-rolling election countdown: primary first, then general.
+// Auto-rolling election banner: primary first, then general.
 const ELECTIONS = [
-  { label: 'Primary', dateStr: 'June 9, 2026',     date: new Date(2026, 5, 9) },
-  { label: 'General', dateStr: 'November 3, 2026', date: new Date(2026, 10, 3) },
+  { label: 'Primary', dateStr: 'June 9, 2026',     shortDate: 'June 9', date: new Date(2026, 5, 9) },
+  { label: 'General', dateStr: 'November 3, 2026', shortDate: 'Nov 3',  date: new Date(2026, 10, 3) },
 ];
 function getElectionInfo() {
   const now = new Date();
   const upcoming = ELECTIONS.find(e => e.date >= now) || ELECTIONS[ELECTIONS.length - 1];
-  const days = Math.max(0, Math.ceil((upcoming.date - now) / 86400000));
-  return { label: upcoming.label, dateStr: upcoming.dateStr, days };
+  return { label: upcoming.label, dateStr: upcoming.dateStr, shortDate: upcoming.shortDate };
 }
 
 function App() {
   const t = SITE_DEFAULTS;
   const [route, setRoute] = useState(getRoute());
   const [toast, setToast] = useState('');
-  const [newsletter, setNewsletter] = useState(false);
-  const [seenNewsletter, setSeenNewsletter] = useState(false);
 
   useEffect(() => {
     const onHash = () => setRoute(getRoute());
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
-
-  useEffect(() => {
-    if (seenNewsletter) return;
-    const id = setTimeout(() => { setNewsletter(true); setSeenNewsletter(true); }, 180000);
-    return () => clearTimeout(id);
-  }, [seenNewsletter]);
 
   const showToast = useCallback((msg) => setToast(msg), []);
   const [election, setElection] = useState(getElectionInfo);
@@ -95,7 +86,7 @@ function App() {
   }, [route]);
 
   let page;
-  if (route === '/') page = <HomePage t={t} showToast={showToast} openNewsletter={() => setNewsletter(true)} />;
+  if (route === '/') page = <HomePage t={t} showToast={showToast} />;
   else if (route === '/donate') page = <div style={{ padding: '120px 24px', textAlign: 'center' }}>Redirecting to the secure donation page…</div>;
   else if (route === '/petition') page = <PetitionPage showToast={showToast} />;
   else if (route === '/volunteer') page = <VolunteerPage showToast={showToast} />;
@@ -105,7 +96,7 @@ function App() {
   else if (route.startsWith('/issues/')) page = <IssueDetail slug={route.split('/')[2]} />;
   else if (route === '/news') page = <NewsPage />;
   else if (route === '/contact') page = <ContactPage />;
-  else page = <HomePage t={t} showToast={showToast} openNewsletter={() => setNewsletter(true)} />;
+  else page = <HomePage t={t} showToast={showToast} />;
 
   return (
     <div data-screen-label={`Route ${route}`}>
@@ -119,8 +110,6 @@ function App() {
       </a>
 
       <Toast msg={toast} onClose={() => setToast('')} />
-      <NewsletterModal open={newsletter} onClose={() => setNewsletter(false)}
-        onSubscribe={() => { setNewsletter(false); showToast('Subscribed. First letter sends Sunday.'); }} />
     </div>
   );
 }
