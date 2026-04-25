@@ -402,3 +402,51 @@ hr.rule-thick {
 @media (max-width: 1080px) { .hide-nav { display: none !important; } }
 .show-nav { display: none; }
 @media (max-width: 1080px) { .show-nav { display: block; } }
+
+/* ── Endorsement bar ──────────────────────────────────────────── */
+.endorsement-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px 32px;
+}
+.endorsement-label {
+  flex: 0 0 auto;
+}
+.endorsement-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px 32px;
+  flex: 1;
+}
+.endorsement-item {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+@media (max-width: 900px) {
+  .endorsement-row {
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .endorsement-list {
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .endorsement-item {
+    white-space: normal;
+  }
+}

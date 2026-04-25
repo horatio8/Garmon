@@ -99,8 +99,22 @@ function Nav({ route, days }) {
           <button className="btn btn-primary btn-sm" onClick={() => navigate('/donate')}>Donate</button>
         </nav>
         <button className="show-nav" onClick={() => setOpen(!open)}
-          style={{ background: 'transparent', border: '1px solid var(--hairline)', borderRadius: 4, padding: '8px 12px' }}>
-          {open ? '✕' : 'Menu'}
+          aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open}
+          style={{
+            background: 'transparent', border: '1px solid var(--hairline)', borderRadius: 4,
+            padding: '10px 12px', width: 44, height: 40,
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            color: 'var(--ink)',
+          }}>
+          {open ? (
+            <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M4 4l12 12M16 4L4 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          ) : (
+            <svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true">
+              <path d="M1 2h20M1 8h20M1 14h20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          )}
         </button>
       </div>
       {open && (
@@ -230,22 +244,16 @@ function EndorsementBar({ compact = false }) {
       background: 'var(--paper-2)',
       padding: compact ? '18px 0' : '28px 0',
     }}>
-      <div className="wrap" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', rowGap: 16, columnGap: 32, justifyContent: 'space-between' }}>
-        <div className="eyebrow" style={{ flex: '0 0 auto' }}>
+      <div className="wrap endorsement-row">
+        <div className="eyebrow endorsement-label">
           <span className="dot" style={{ background: 'var(--gold)' }} />
           Endorsed by
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', rowGap: 14, columnGap: 32, alignItems: 'center', flex: 1, justifyContent: 'space-around' }}>
+        <ul className="endorsement-list">
           {orgs.map((o, i) => (
-            <span key={i} style={{
-              fontFamily: 'var(--serif)',
-              fontSize: 16, fontWeight: 600,
-              color: 'var(--navy)',
-              letterSpacing: '-0.01em',
-              lineHeight: 1.3,
-            }}>{o}</span>
+            <li key={i} className="endorsement-item">{o}</li>
           ))}
-        </div>
+        </ul>
       </div>
     </div>
   );
