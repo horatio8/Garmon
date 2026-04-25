@@ -19,7 +19,6 @@
 
 <script type="text/babel" src="components/shared.jsx"></script>
 <script type="text/babel" src="components/home.jsx"></script>
-<script type="text/babel" src="components/donate.jsx"></script>
 <script type="text/babel" src="components/petition.jsx"></script>
 <script type="text/babel" src="components/pages.jsx"></script>
 
@@ -37,11 +36,16 @@ const SITE_DEFAULTS = {
   endorsementStyle: "logos",
 };
 
+const DONATE_URL = 'https://secure.anedot.com/johnnie-garmon-for-sc115/donate?exitIntent=true';
+window.DONATE_URL = DONATE_URL;
+window.goDonate = () => { window.location.href = DONATE_URL; };
+
 function getRoute() {
   const h = window.location.hash.replace(/^#/, '') || '/';
   return h.startsWith('/') ? h : '/' + h;
 }
 window.navigate = (path) => {
+  if (path === '/donate') { window.goDonate(); return; }
   window.location.hash = path;
   window.scrollTo({ top: 0, behavior: 'instant' });
 };
@@ -68,9 +72,15 @@ function App() {
   const showToast = useCallback((msg) => setToast(msg), []);
   const days = Math.max(1, Math.ceil((new Date('2026-06-09') - new Date()) / 86400000));
 
+  // Donate is hosted externally (Anedot). If anyone lands on /#/donate
+  // (old links, deep-linked share, etc.), bounce them to the live form.
+  useEffect(() => {
+    if (route === '/donate') window.location.replace(DONATE_URL);
+  }, [route]);
+
   let page;
   if (route === '/') page = <HomePage t={t} showToast={showToast} openNewsletter={() => setNewsletter(true)} />;
-  else if (route === '/donate') page = <DonatePage t={t} showToast={showToast} />;
+  else if (route === '/donate') page = <div style={{ padding: '120px 24px', textAlign: 'center' }}>Redirecting to the secure donation page…</div>;
   else if (route === '/petition') page = <PetitionPage showToast={showToast} />;
   else if (route === '/volunteer') page = <VolunteerPage showToast={showToast} />;
   else if (route === '/events') page = <EventsPage showToast={showToast} />;
@@ -87,12 +97,10 @@ function App() {
       {page}
       <Footer />
 
-      {route !== '/donate' && (
-        <button className="sticky-donate" onClick={() => navigate('/donate')}>
-          <span style={{ width: 8, height: 8, background: 'var(--paper)', borderRadius: '50%' }} className="pulse-dot" />
-          Donate
-        </button>
-      )}
+      <a className="sticky-donate" href={DONATE_URL}>
+        <span style={{ width: 8, height: 8, background: 'var(--paper)', borderRadius: '50%' }} className="pulse-dot" />
+        Donate
+      </a>
 
       <Toast msg={toast} onClose={() => setToast('')} />
       <NewsletterModal open={newsletter} onClose={() => setNewsletter(false)}
