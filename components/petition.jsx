@@ -1,6 +1,8 @@
 /* global React */
 const { useState, useEffect } = React;
 
+const PLEDGE_RECEIVER_URL = 'https://jgn.campaignnucleus.com/forms/receiver/26a0f120-140b-4d01-95be-cfd9951d689e';
+
 const SAMPLE_NAMES = [
   'Mary', 'Robert', 'Elise', 'Walter', 'Patricia', 'Henry',
   'Carol', 'Daniel', 'Susan', 'James', 'Ann-Marie', 'Beau',
@@ -10,21 +12,60 @@ const SAMPLE_NAMES = [
   'Patrick', 'Sarah', 'Lawrence', 'Cynthia', 'Richard', 'Eleanor',
 ];
 
-function firstNameOf(full) {
-  return (full || '').trim().split(/\s+/)[0] || 'Anonymous';
-}
+const VOLUNTEER_OPTS = [
+  { value: 'homeevent',     label: 'Host an EVENT in your home' },
+  { value: 'Yardsign',      label: 'Put a YARD SIGN up' },
+  { value: 'donorprospect', label: 'Make a FINANCIAL CONTRIBUTION' },
+  { value: 'doorknocking',  label: 'DOOR KNOCK your neighborhood' },
+  { value: 'admin',         label: 'Help with ADMINISTRATION' },
+];
+
+const LOCATION_OPTS = [
+  { value: 'Location_folly',    label: 'Folly Beach' },
+  { value: 'Location_Johns',    label: 'Johns Island' },
+  { value: 'Location_James',    label: 'James Island' },
+  { value: 'Location_Kiawah',   label: 'Kiawah Island' },
+  { value: 'Location_Seabrook', label: 'Seabrook Island' },
+];
+
+window.submitPledge = async function submitPledge(formEl) {
+  const fd = new FormData(formEl);
+  // Cross-origin form receivers don't expose CORS headers, so we use no-cors.
+  // The request still fires; we just can't read the response body or status.
+  await fetch(PLEDGE_RECEIVER_URL, { method: 'POST', mode: 'no-cors', body: fd });
+};
 
 function PetitionPage({ showToast }) {
   const [pledged, setPledged] = useState(false);
   const [count, setCount] = useState(847);
-  const [form, setForm] = useState({ name: '', email: '', phone: '' });
+  const [form, setForm] = useState({
+    first_name: '', last_name: '', email: '', phone: '',
+    Location: '',
+    Volunteer: [],
+  });
+  const [submitting, setSubmitting] = useState(false);
   const [recent, setRecent] = useState(SAMPLE_NAMES);
 
-  const submit = (e) => {
+  const toggleVolunteer = (val) => setForm(f => ({
+    ...f,
+    Volunteer: f.Volunteer.includes(val) ? f.Volunteer.filter(v => v !== val) : [...f.Volunteer, val],
+  }));
+
+  const submit = async (e) => {
     e.preventDefault();
-    setRecent([firstNameOf(form.name), ...recent]);
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      await window.submitPledge(e.target);
+    } catch (err) {
+      setSubmitting(false);
+      showToast("Couldn't reach the campaign server. Please try again.");
+      return;
+    }
+    setRecent([(form.first_name || '').trim() || 'Anonymous', ...recent]);
     setCount(c => c + 1);
     setPledged(true);
+    setSubmitting(false);
     showToast('Pledge recorded. Welcome to the team.');
   };
 
@@ -44,7 +85,7 @@ function PetitionPage({ showToast }) {
           </h1>
           <p className="lede" style={{ marginTop: 22, maxWidth: 580, margin: '22px auto 0' }}>
             "I'll vote for Johnnie Garmon for SC House District 115 in the June 9 Republican
-            primary and the November general election." That's the pledge. Your name appears
+            primary and the November general election." That's the pledge. Your first name appears
             on the public pledge wall below.
           </p>
         </div>
@@ -58,22 +99,80 @@ function PetitionPage({ showToast }) {
               {!pledged ? (
                 <form onSubmit={submit}>
                   <h2 className="h-3">Pledge my vote.</h2>
-                  <p className="small" style={{ margin: '6px 0 24px' }}>Twelve seconds. No credit card. No follow-up calls unless you ask. Your pledge covers the June 9 primary and the November general.</p>
+                  <p className="small" style={{ margin: '6px 0 24px' }}>
+                    Twelve seconds. No credit card. No follow-up calls unless you ask. Your pledge
+                    covers the June 9 primary and the November general.
+                  </p>
 
                   <div className="col" style={{ gap: 14 }}>
-                    <div className="field"><label>Full name *</label>
-                      <input required type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Mary Pinckney" />
-                      <span className="help">Only your first name appears on the public pledge wall.</span>
+                    <div className="grid grid-2" style={{ gap: 14 }}>
+                      <div className="field">
+                        <label htmlFor="pl-first">First name *</label>
+                        <input id="pl-first" name="first_name" type="text" required
+                          value={form.first_name}
+                          onChange={e => setForm({ ...form, first_name: e.target.value })}
+                          placeholder="Mary" />
+                      </div>
+                      <div className="field">
+                        <label htmlFor="pl-last">Last name *</label>
+                        <input id="pl-last" name="last_name" type="text" required
+                          value={form.last_name}
+                          onChange={e => setForm({ ...form, last_name: e.target.value })}
+                          placeholder="Pinckney" />
+                      </div>
                     </div>
-                    <div className="field"><label>Email *</label>
-                      <input required type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="you@email.com" />
-                    </div>
-                    <div className="field"><label>Phone (optional)</label>
-                      <input type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="(843) 555-0115" />
+                    <span className="help" style={{ marginTop: -4 }}>
+                      Only your first name appears on the public pledge wall.
+                    </span>
+
+                    <div className="field">
+                      <label htmlFor="pl-phone">Cell / Mobile phone *</label>
+                      <input id="pl-phone" name="phone" type="tel" required
+                        value={form.phone}
+                        onChange={e => setForm({ ...form, phone: e.target.value })}
+                        placeholder="(843) 555-0115" />
                       <span className="help">Used only for primary-day reminders. Never sold.</span>
                     </div>
 
-                    <button className="btn btn-primary btn-full btn-lg" type="submit">Pledge my vote →</button>
+                    <div className="field">
+                      <label htmlFor="pl-email">Email</label>
+                      <input id="pl-email" name="email" type="email"
+                        value={form.email}
+                        onChange={e => setForm({ ...form, email: e.target.value })}
+                        placeholder="you@email.com" />
+                    </div>
+
+                    <div className="field">
+                      <label htmlFor="pl-location">Where do you live?</label>
+                      <select id="pl-location" name="Location"
+                        value={form.Location}
+                        onChange={e => setForm({ ...form, Location: e.target.value })}>
+                        <option value="">Select an island (optional)</option>
+                        {LOCATION_OPTS.map(o => (
+                          <option key={o.value} value={o.value}>{o.label}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="field">
+                      <label>Want to do more? (optional)</label>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 4 }}>
+                        {VOLUNTEER_OPTS.map(o => {
+                          const checked = form.Volunteer.includes(o.value);
+                          return (
+                            <label key={o.value} className={'checkbox-row ' + (checked ? 'checked' : '')}>
+                              <input type="checkbox" name="Volunteer[]" value={o.value}
+                                checked={checked} onChange={() => toggleVolunteer(o.value)} />
+                              <span style={{ fontSize: 14 }}>{o.label}</span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <button className="btn btn-primary btn-full btn-lg" type="submit" disabled={submitting}>
+                      {submitting ? 'Submitting…' : 'Pledge my vote →'}
+                    </button>
 
                     <p className="fineprint" style={{ margin: 0 }}>
                       By pledging, your first name will appear publicly. You agree to receive campaign updates. Paid for by the Committee to Elect Johnnie Garmon.

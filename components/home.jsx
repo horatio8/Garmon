@@ -268,13 +268,23 @@ function PillarCard({ p, idx, cardStyle, showGold }) {
 
 /* ── COUNTER BLOCK ───────────────────────────────────────────── */
 function CounterBlock({ showToast, showGold }) {
-  const [email, setEmail] = useState('');
+  const [form, setForm] = useState({ first_name: '', last_name: '', email: '', phone: '' });
+  const [submitting, setSubmitting] = useState(false);
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    if (!email) return;
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      await window.submitPledge(e.target);
+    } catch (err) {
+      setSubmitting(false);
+      showToast("Couldn't reach the campaign server. Please try again.");
+      return;
+    }
+    setSubmitting(false);
     showToast('Pledge recorded. Welcome to the team.');
-    setEmail('');
+    setForm({ first_name: '', last_name: '', email: '', phone: '' });
   };
 
   return (
@@ -302,19 +312,38 @@ function CounterBlock({ showToast, showGold }) {
             <Eyebrow>Pledge your vote</Eyebrow>
             <h3 className="h-3" style={{ marginTop: 12 }}>Pledge my vote.</h3>
             <p className="small" style={{ margin: '8px 0 22px' }}>
-              Takes 12 seconds. Your name goes on the public pledge wall.
+              Takes 12 seconds. Your first name goes on the public pledge wall.
             </p>
             <div className="col" style={{ gap: 14 }}>
-              <div className="field">
-                <label htmlFor="petname">Full name</label>
-                <input id="petname" type="text" placeholder="Mary Pinckney" required />
-                <span className="help">Only your first name appears on the public pledge wall.</span>
+              <div className="grid grid-2" style={{ gap: 14 }}>
+                <div className="field">
+                  <label htmlFor="hp-first">First name</label>
+                  <input id="hp-first" name="first_name" type="text" placeholder="Mary" required
+                    value={form.first_name}
+                    onChange={e => setForm({ ...form, first_name: e.target.value })} />
+                </div>
+                <div className="field">
+                  <label htmlFor="hp-last">Last name</label>
+                  <input id="hp-last" name="last_name" type="text" placeholder="Pinckney" required
+                    value={form.last_name}
+                    onChange={e => setForm({ ...form, last_name: e.target.value })} />
+                </div>
               </div>
               <div className="field">
-                <label htmlFor="petemail">Email</label>
-                <input id="petemail" type="email" placeholder="you@email.com" value={email} onChange={e => setEmail(e.target.value)} required />
+                <label htmlFor="hp-phone">Cell / Mobile phone</label>
+                <input id="hp-phone" name="phone" type="tel" placeholder="(843) 555-0115" required
+                  value={form.phone}
+                  onChange={e => setForm({ ...form, phone: e.target.value })} />
               </div>
-              <button className="btn btn-primary btn-full btn-lg" type="submit">Pledge my vote →</button>
+              <div className="field">
+                <label htmlFor="hp-email">Email</label>
+                <input id="hp-email" name="email" type="email" placeholder="you@email.com"
+                  value={form.email}
+                  onChange={e => setForm({ ...form, email: e.target.value })} />
+              </div>
+              <button className="btn btn-primary btn-full btn-lg" type="submit" disabled={submitting}>
+                {submitting ? 'Submitting…' : 'Pledge my vote →'}
+              </button>
               <p className="fineprint" style={{ margin: 0 }}>By pledging, you agree to be added to the campaign list. We'll never share your info.</p>
             </div>
           </form>
