@@ -5,15 +5,17 @@ const { useState, useEffect, useRef } = React;
    Shared building blocks for the Garmon prototype
    ──────────────────────────────────────────────────────────── */
 
-function Logo({ size = 26, white = false }) {
-  // Real campaign logo. JPEG has a white background, so for the warm off-white
-  // menu bar we sit it on its own white pill to keep clean edges and presence.
+function Logo({ size = 26, white = false, settings }) {
+  const s = settings || (window.SITE_DATA && window.SITE_DATA.settings) || (window.SITE_DEFAULTS && window.SITE_DEFAULTS.settings) || {};
   const h = size * 2.2;
+  const src = white
+    ? (s.logoImageWhite || 'assets/garmon-logo-transparent.png')
+    : (s.logoImage      || 'assets/garmon-logo.jpeg');
   return (
     <a href="#/" onClick={(e) => { e.preventDefault(); navigate('/'); }}
        style={{ display: 'inline-flex', alignItems: 'center', lineHeight: 1, height: h }}>
       <img
-        src={white ? 'assets/garmon-logo-transparent.png' : 'assets/garmon-logo.jpeg'}
+        src={src}
         alt="Johnnie Garmon for State House"
         style={{
           height: h,
@@ -48,8 +50,9 @@ function Eyebrow({ children, dot = true, color }) {
 }
 
 /* ── Top nav ─────────────────────────────────────────────────── */
-function Nav({ route, election }) {
+function Nav({ route, election, settings }) {
   const e = election || { label: 'Primary', dateStr: 'June 9, 2026', shortDate: 'June 9' };
+  const district = (settings && settings.district) || 'HD-115';
   const [open, setOpen] = useState(false);
   const items = [
     { label: 'About',     path: '/about' },
@@ -75,7 +78,7 @@ function Nav({ route, election }) {
             <strong>{e.label}:</strong> {e.dateStr}
           </span>
           <span className="hide-nav" style={{ flex: '0 0 auto' }}>
-            {e.shortDate} · HD‑115
+            {e.shortDate} · {district}
           </span>
         </div>
       </div>
@@ -83,7 +86,7 @@ function Nav({ route, election }) {
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         gap: 24,
       }}>
-        <Logo size={26} />
+        <Logo size={26} settings={settings} />
         <nav className="hide-nav" style={{ display: 'flex', gap: 22, alignItems: 'center' }}>
           {items.map(it => (
             <a key={it.path} href={'#' + it.path}
@@ -136,7 +139,8 @@ function Nav({ route, election }) {
 }
 
 /* ── Footer ──────────────────────────────────────────────────── */
-function Footer() {
+function Footer({ settings }) {
+  const s = settings || {};
   return (
     <footer style={{
       background: 'linear-gradient(180deg, #C8242F 0%, #7A1019 100%)',
@@ -146,7 +150,7 @@ function Footer() {
       <div className="wrap">
         <div className="grid grid-4" style={{ gap: 48 }}>
           <div style={{ gridColumn: 'span 2' }}>
-            <Logo size={56} white />
+            <Logo size={56} white settings={settings} />
             <p style={{ marginTop: 24, maxWidth: 380, color: 'rgba(255,255,255,0.7)', fontSize: 15 }}>
               A campaign about doing the work, keeping the promises, and protecting what makes
               the Lowcountry the Lowcountry.
@@ -169,10 +173,12 @@ function Footer() {
           <div>
             <div className="eyebrow" style={{ color: 'var(--gold-soft)' }}>Contact</div>
             <ul style={{ listStyle: 'none', padding: 0, margin: '14px 0 0', display: 'flex', flexDirection: 'column', gap: 10, fontSize: 14 }}>
-              <li>hello@togetherwithgarmon.com</li>
-              <li>media@togetherwithgarmon.com</li>
-              <li>(843) 555-0115</li>
-              <li>PO Box 30115<br />Charleston, SC 29412</li>
+              {s.generalEmail && <li>{s.generalEmail}</li>}
+              {s.pressEmail   && <li>{s.pressEmail}</li>}
+              {s.phone        && <li>{s.phone}</li>}
+              {s.mailingAddress && <li>{s.mailingAddress.split('\n').map((line, i, arr) => (
+                <React.Fragment key={i}>{line}{i < arr.length - 1 && <br />}</React.Fragment>
+              ))}</li>}
             </ul>
           </div>
         </div>
@@ -181,7 +187,7 @@ function Footer() {
 
         <div className="between" style={{ flexWrap: 'wrap', gap: 16, fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>
           <div className="fineprint" style={{ color: 'rgba(255,255,255,0.5)' }}>
-            <strong style={{ color: 'rgba(255,255,255,0.75)' }}>Paid for by the Committee to Elect Johnnie Garmon.</strong> Not authorized by any candidate or candidate's committee. Contributions are not tax deductible.
+            {s.paidForBy || "Paid for by the Committee to Elect Johnnie Garmon."}
           </div>
           <div style={{ display: 'flex', gap: 18 }}>
             <a href="#privacy">Privacy</a>
@@ -232,13 +238,11 @@ function CountUp({ to, duration = 1400 }) {
 }
 
 /* ── Endorsement bar ─────────────────────────────────────────── */
-function EndorsementBar({ compact = false }) {
-  const orgs = [
-    'Speaker Murrell Smith',
-    'SC House Republican Caucus',
-    'Americans for Prosperity',
-    'Gov. McMaster (Healthcare Comm.)',
-  ];
+function EndorsementBar({ compact = false, endorsements }) {
+  const orgs = (endorsements && endorsements.length)
+    ? endorsements.map(e => e.name)
+    : ['Speaker Murrell Smith', 'SC House Republican Caucus', 'Americans for Prosperity', 'Gov. McMaster (Healthcare Comm.)'];
+  if (!orgs.length) return null;
   return (
     <div className={'endorsement-bar' + (compact ? ' is-compact' : '')}>
       <div className="wrap endorsement-row">

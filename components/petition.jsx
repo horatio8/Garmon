@@ -1,8 +1,6 @@
 /* global React */
 const { useState, useEffect } = React;
 
-const PLEDGE_RECEIVER_URL = 'https://jgn.campaignnucleus.com/forms/receiver/26a0f120-140b-4d01-95be-cfd9951d689e';
-
 const SAMPLE_NAMES = [
   'Mary', 'Robert', 'Elise', 'Walter', 'Patricia', 'Henry',
   'Carol', 'Daniel', 'Susan', 'James', 'Ann-Marie', 'Beau',
@@ -30,14 +28,18 @@ const LOCATION_OPTS = [
 
 window.submitPledge = async function submitPledge(formEl) {
   const fd = new FormData(formEl);
-  // Cross-origin form receivers don't expose CORS headers, so we use no-cors.
-  // The request still fires; we just can't read the response body or status.
-  await fetch(PLEDGE_RECEIVER_URL, { method: 'POST', mode: 'no-cors', body: fd });
+  const url = window.PLEDGE_RECEIVER_URL
+    || (window.SITE_DATA && window.SITE_DATA.settings && window.SITE_DATA.settings.pledgeReceiverUrl)
+    || 'https://jgn.campaignnucleus.com/forms/receiver/26a0f120-140b-4d01-95be-cfd9951d689e';
+  await fetch(url, { method: 'POST', mode: 'no-cors', body: fd });
 };
 
-function PetitionPage({ showToast }) {
+function PetitionPage({ data, showToast }) {
+  const settings = (data && data.settings) || {};
+  const goal = Number(settings.pledgeGoal) || 1500;
+  const baseCount = Number(settings.pledgeBaseCount) || 847;
   const [pledged, setPledged] = useState(false);
-  const [count, setCount] = useState(847);
+  const [count, setCount] = useState(baseCount);
   const [form, setForm] = useState({
     first_name: '', last_name: '', email: '', phone: '',
     Location: '',
@@ -62,6 +64,7 @@ function PetitionPage({ showToast }) {
       showToast("Couldn't reach the campaign server. Please try again.");
       return;
     }
+    if (window.mirrorPledge) await window.mirrorPledge(form, 'site');
     setRecent([(form.first_name || '').trim() || 'Anonymous', ...recent]);
     setCount(c => c + 1);
     setPledged(true);
@@ -69,7 +72,7 @@ function PetitionPage({ showToast }) {
     showToast('Pledge recorded. Welcome to the team.');
   };
 
-  const pct = Math.min(100, (count / 1500) * 100);
+  const pct = Math.min(100, (count / goal) * 100);
 
   return (
     <main>
@@ -84,7 +87,7 @@ function PetitionPage({ showToast }) {
             <span style={{ color: 'var(--crimson)' }}>Pledge my vote.</span>
           </h1>
           <p className="lede" style={{ marginTop: 22, maxWidth: 580, margin: '22px auto 0' }}>
-            "I'll vote for Johnnie Garmon for SC House District 115 in the June 9 Republican
+            "I'll vote for Johnnie Garmon for SC House District 115 in the {settings.primaryShort || 'June 9'} Republican
             primary and the November general election." That's the pledge. Your first name appears
             on the public pledge wall below.
           </p>
@@ -101,7 +104,7 @@ function PetitionPage({ showToast }) {
                   <h2 className="h-3">Pledge my vote.</h2>
                   <p className="small" style={{ margin: '6px 0 24px' }}>
                     Twelve seconds. No credit card. No follow-up calls unless you ask. Your pledge
-                    covers the June 9 primary and the November general.
+                    covers the {settings.primaryShort || 'June 9'} primary and the November general.
                   </p>
 
                   <div className="col" style={{ gap: 14 }}>
@@ -207,7 +210,7 @@ function PetitionPage({ showToast }) {
                   <div className="serif" style={{ fontSize: 72, fontWeight: 600, lineHeight: 1, color: 'var(--paper)', marginTop: 10, fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.03em' }}>
                     <CountUp to={count} />
                   </div>
-                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 6 }}>pledges · goal 1,500 by June 9</div>
+                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 6 }}>pledges · goal {goal.toLocaleString()} by {settings.primaryShort || 'June 9'}</div>
                 </div>
                 <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--crimson)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                   <span className="pulse-dot" style={{ width: 10, height: 10, background: 'var(--paper)', borderRadius: '50%' }} />
@@ -218,7 +221,7 @@ function PetitionPage({ showToast }) {
               </div>
               <div className="between" style={{ marginTop: 10, fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>
                 <span>{pct.toFixed(0)}% to goal</span>
-                <span>{(1500 - count).toLocaleString()} to go</span>
+                <span>{Math.max(0, goal - count).toLocaleString()} to go</span>
               </div>
             </div>
 

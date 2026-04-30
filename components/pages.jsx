@@ -2,16 +2,8 @@
 const { useState } = React;
 
 /* ── VOLUNTEER ───────────────────────────────────────────────── */
-function VolunteerPage({ showToast }) {
-  const opts = [
-    { id: 'door', label: 'Door-knocking', body: 'Walk a precinct on a Saturday. Most popular.' },
-    { id: 'phone', label: 'Phone banking', body: 'Two-hour shifts from your couch.' },
-    { id: 'yard', label: 'Yard sign', body: 'We deliver and install.' },
-    { id: 'host', label: 'Host an event', body: 'Open your living room to 12–30 neighbors.' },
-    { id: 'data', label: 'Data entry', body: 'Help us keep the voter file clean.' },
-    { id: 'drive', label: 'Drive seniors to polls', body: 'June 9, all day.' },
-    { id: 'other', label: 'Other / talk to me', body: 'Tell us what you want to do.' },
-  ];
+function VolunteerPage({ data, showToast }) {
+  const opts = ((data && data.volunteer) || []).map(o => ({ id: o.key, label: o.label, body: o.body }));
   const [picked, setPicked] = useState({});
   const [form, setForm] = useState({ name: '', email: '', phone: '', zip: '', notes: '' });
 
@@ -79,16 +71,11 @@ function VolunteerPage({ showToast }) {
 }
 
 /* ── EVENTS ──────────────────────────────────────────────────── */
-const EVENTS = [
-  { date: 'May 28', day: 'Thu', time: '5:30 – 7:30 pm', title: 'Happy Hour with Johnnie', loc: 'Beach Club, Kiawah Island', host: 'Bill & Patty Holcombe', tag: 'Featured' },
-  { date: 'May 31', day: 'Sun', time: '10:00 am', title: 'Coffee on the Porch', loc: 'James Island, Avondale', host: 'Carol Wieters', tag: null },
-  { date: 'Jun 02', day: 'Tue', time: '6:00 pm', title: 'Folly Beach Town Hall', loc: 'Folly River Park Pavilion', host: 'Open to all', tag: null },
-  { date: 'Jun 04', day: 'Thu', time: '7:00 pm', title: 'Healthcare & Aging Panel', loc: 'St. Andrew\'s Episcopal, James Is.', host: 'With Dr. Lila Pope', tag: null },
-  { date: 'Jun 06', day: 'Sat', time: '8:00 am – noon', title: 'Door-knock Saturday', loc: 'Riverland Terrace HQ', host: 'Volunteer event', tag: 'GOTV' },
-  { date: 'Jun 08', day: 'Mon', time: '6:30 pm', title: 'Election Eve Rally', loc: 'Riverfront Park, North Charleston', host: 'With Speaker Smith', tag: null },
-];
-
-function EventsPage({ showToast }) {
+function EventsPage({ data, showToast }) {
+  const EVENTS = ((data && data.events) || []).map(e => ({
+    date: e.date_label, day: e.day_label, time: e.time_label,
+    title: e.title, loc: e.location, host: e.host, tag: e.tag,
+  }));
   const [rsvp, setRsvp] = useState(null);
   return (
     <main>
@@ -153,7 +140,10 @@ function EventsPage({ showToast }) {
 }
 
 /* ── ABOUT ───────────────────────────────────────────────────── */
-function AboutPage() {
+function AboutPage({ data }) {
+  const s = (data && data.settings) || {};
+  const headlineParts = (s.aboutHeadline || 'Built one job at a time. Built here.').split('.');
+  const aboutImage = s.aboutImage || s.storyImage || '';
   return (
     <main>
       <section style={{ background: 'var(--paper-2)', paddingBottom: 32 }}>
@@ -162,12 +152,11 @@ function AboutPage() {
             <div>
               <Eyebrow>About Johnnie</Eyebrow>
               <h1 className="h-display" style={{ marginTop: 18 }}>
-                Built one job at a time. <span style={{ color: 'var(--crimson)' }}>Built here.</span>
+                {headlineParts[0]}.{headlineParts[1] && <> <span style={{ color: 'var(--crimson)' }}>{headlineParts.slice(1).join('.').trim()}</span></>}
               </h1>
             </div>
             <p className="lede">
-              The story they're trying to fit into a yard sign is, like most useful stories,
-              longer than that.
+              {s.aboutLede || "The story they're trying to fit into a yard sign is, like most useful stories, longer than that."}
             </p>
           </div>
         </div>
@@ -176,57 +165,50 @@ function AboutPage() {
       <section style={{ paddingTop: 0 }}>
         <div className="wrap">
           <div className="grid grid-2" style={{ gap: 56, alignItems: 'start' }}>
-            <div className="placeholder" style={{ aspectRatio: '4/5', minHeight: 540 }}>
-              Garmon portrait — sleeves rolled, James Island porch
-            </div>
+            {aboutImage ? (
+              <img src={aboutImage} alt="Johnnie Garmon portrait"
+                style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: 4, display: 'block' }} />
+            ) : (
+              <div className="placeholder" style={{ aspectRatio: '4/5', minHeight: 540 }}>
+                Garmon portrait — sleeves rolled, James Island porch
+              </div>
+            )}
             <div>
               <Eyebrow>The arc</Eyebrow>
               <h2 className="h-2" style={{ marginTop: 12 }}>From Section 8 to business owner.</h2>
-              <p style={{ marginTop: 16, color: 'var(--ink-2)', fontSize: 17 }}>
-                Johnnie was raised in subsidized housing in upstate South Carolina. He was the
-                first in his family to finish college, paying his way through the College of
-                Charleston by working nights in restaurants and weekends in roofing.
-              </p>
-              <p style={{ color: 'var(--ink-2)', fontSize: 17 }}>
-                Over the next thirty years he built three businesses — a home services company,
-                a small commercial real-estate practice, and an aging-at-home advisory firm
-                that today serves families across the Lowcountry.
-              </p>
+              {s.aboutArc1 && <p style={{ marginTop: 16, color: 'var(--ink-2)', fontSize: 17 }}>{s.aboutArc1}</p>}
+              {s.aboutArc2 && <p style={{ color: 'var(--ink-2)', fontSize: 17 }}>{s.aboutArc2}</p>}
 
-              <blockquote style={{
-                margin: '32px 0',
-                padding: '24px 28px',
-                borderLeft: '4px solid var(--crimson)',
-                background: 'var(--paper-2)',
-                fontFamily: 'var(--serif)',
-                fontSize: 22,
-                fontStyle: 'italic',
-                color: 'var(--navy-deep)',
-                lineHeight: 1.4,
-              }}>
-                "South Carolina took a chance on a kid with nothing but stubbornness and a
-                public-school education. I'm running so the next kid gets the same chance."
-              </blockquote>
+              {s.aboutQuote && (
+                <blockquote style={{
+                  margin: '32px 0',
+                  padding: '24px 28px',
+                  borderLeft: '4px solid var(--crimson)',
+                  background: 'var(--paper-2)',
+                  fontFamily: 'var(--serif)',
+                  fontSize: 22,
+                  fontStyle: 'italic',
+                  color: 'var(--navy-deep)',
+                  lineHeight: 1.4,
+                }}>
+                  "{s.aboutQuote}"
+                </blockquote>
+              )}
 
-              <h3 className="h-3" style={{ marginTop: 24 }}>Family.</h3>
-              <p style={{ color: 'var(--ink-2)', fontSize: 17 }}>
-                Married thirty-one years to Kelley. Father of three daughters — Caroline, Avery,
-                and June. Member of Holy Cross Episcopal. Little League coach for nine seasons.
-              </p>
+              {s.aboutFamily && <>
+                <h3 className="h-3" style={{ marginTop: 24 }}>Family.</h3>
+                <p style={{ color: 'var(--ink-2)', fontSize: 17 }}>{s.aboutFamily}</p>
+              </>}
 
-              <h3 className="h-3" style={{ marginTop: 24 }}>The book.</h3>
-              <p style={{ color: 'var(--ink-2)', fontSize: 17 }}>
-                <em>Failure Disrupted</em> is Johnnie's account of three near-bankruptcies, the
-                hard-won management principles that came from them, and what conservative
-                governance can learn from the discipline of a small balance sheet.
-              </p>
+              {s.aboutBook && <>
+                <h3 className="h-3" style={{ marginTop: 24 }}>The book.</h3>
+                <p style={{ color: 'var(--ink-2)', fontSize: 17 }} dangerouslySetInnerHTML={{ __html: s.aboutBook }} />
+              </>}
 
-              <h3 className="h-3" style={{ marginTop: 24 }}>Public service.</h3>
-              <p style={{ color: 'var(--ink-2)', fontSize: 17 }}>
-                Appointed by Governor Henry McMaster to the South Carolina Healthcare Study
-                Committee. Past board member of the Charleston Metro Chamber. Active with the
-                Lowcountry Land Trust.
-              </p>
+              {s.aboutService && <>
+                <h3 className="h-3" style={{ marginTop: 24 }}>Public service.</h3>
+                <p style={{ color: 'var(--ink-2)', fontSize: 17 }}>{s.aboutService}</p>
+              </>}
             </div>
           </div>
         </div>
@@ -236,20 +218,10 @@ function AboutPage() {
 }
 
 /* ── ISSUES OVERVIEW ─────────────────────────────────────────── */
-const ISSUES = [
-  { slug: 'permitting', n: '01', tag: 'Permitting', title: 'Stop Stacking Paper.', stance: 'Demand 90-day permit deadlines and public throughput numbers.' },
-  { slug: 'property',   n: '02', tag: 'Property tax', title: 'Reduce the 6.2% Tax.', stance: 'Long-time residents have earned a place to stand.' },
-  { slug: 'concurrency',n: '03', tag: 'Growth',      title: 'Concurrency or Bust.', stance: 'No subdivisions where the schools and roads can\'t keep up.' },
-  { slug: 'healthcare', n: '04', tag: 'Healthcare',  title: 'Aging at Home.',       stance: 'Modernize advanced directives and in-home care.' },
-  { slug: 'small-biz',  n: '05', tag: 'Business',    title: 'Defend Main Street.',  stance: 'Dram shop reform and permit accountability.' },
-  { slug: 'education',  n: '06', tag: 'Education',   title: 'Choice and Transparency.', stance: 'Parental control and transparent K–12 funding.' },
-  { slug: 'character',  n: '07', tag: 'Place',       title: 'Lowcountry Character.', stance: 'Protect what makes the Lowcountry the Lowcountry.' },
-  { slug: 'directives', n: '08', tag: 'End-of-life', title: 'Honor the Last Wish.', stance: 'Modernize advanced-directive law.' },
-  { slug: 'dram',       n: '09', tag: 'Liability',   title: 'Reform Dram Shop.',    stance: 'Stop crushing small restaurants with insurance impossible to obtain.' },
-  { slug: 'mandates',   n: '10', tag: 'Counties',    title: 'No Unfunded Mandates.', stance: 'Stop dumping costs on county budgets.' },
-];
-
-function IssuesPage() {
+function IssuesPage({ data }) {
+  const ISSUES = ((data && data.issues) || []).map(it => ({
+    slug: it.slug, n: it.number, tag: it.tag, title: it.title, stance: it.stance,
+  }));
   return (
     <main>
       <section style={{ background: 'var(--paper-2)', paddingBottom: 32 }}>
@@ -295,26 +267,21 @@ function IssuesPage() {
 }
 
 /* ── ISSUE DEEP-DIVE ─────────────────────────────────────────── */
-const ISSUE_DETAIL = {
-  permitting: {
-    n: '01', tag: 'Permitting',
-    head: 'Columbia is generating busyness, not results.',
-    deck: 'Eight months for a backyard shed. Eleven for a coffee shop. Stop Stacking Paper.',
-    story: 'Last summer a young couple in West Ashley took ten months to permit a 400-square-foot mother-in-law cottage for an aging parent. By the time the paperwork cleared, the parent was in skilled nursing. The cottage sits empty.',
-    problem: 'South Carolina has no statutory deadline by which a local permitting agency must issue a decision. There is no public reporting on throughput. Counties hide behind "the back-and-forth with the applicant" while applicants hide their applications behind tabs in Outlook. Nobody owns the timeline.',
-    bullets: [
-      '90-day statutory shot-clock on residential permits — denial requires written reasons.',
-      'Quarterly public throughput reports for every county and municipal permit office.',
-      'Automatic refund of permit fees for applications older than 180 days.',
-      'A statewide single-portal pilot program for residential ADU and renovation permits.',
-      'No more "review by committee that meets every other Wednesday." The clock runs.',
-    ],
-    reframe: 'What if the question isn\'t "how do we make planners faster" but "what is the cost — to the family, the trades, the tax base — of every week that an approvable application sits in a queue"?',
-  },
-};
-
-function IssueDetail({ slug }) {
-  const d = ISSUE_DETAIL[slug] || ISSUE_DETAIL.permitting;
+function IssueDetail({ data, slug }) {
+  const issues = (data && data.issues) || [];
+  const found = issues.find(it => it.slug === slug);
+  const fallback = issues.find(it => it.slug === 'permitting') || issues[0];
+  const src = found || fallback || {};
+  const d = {
+    n: src.number || '00',
+    tag: src.tag || '',
+    head: src.head || src.title || '',
+    deck: src.deck || src.stance || '',
+    story: src.story || '',
+    problem: src.problem || '',
+    bullets: Array.isArray(src.bullets) ? src.bullets : [],
+    reframe: src.reframe || '',
+  };
   return (
     <main>
       <section style={{ background: 'var(--navy-deep)', color: 'var(--paper)', paddingBottom: 80 }}>
@@ -404,15 +371,10 @@ function IssueDetail({ slug }) {
 }
 
 /* ── NEWS / CONTACT (light) ──────────────────────────────────── */
-function NewsPage() {
-  const items = [
-    { tag: 'Op-ed', date: 'Dec 12, 2025', source: 'FITSNews', title: 'Stop Stacking Paper: Why Busyness Is Bankrupting South Carolina.' },
-    { tag: 'Op-ed', date: 'Jan 14, 2026', source: 'Post & Courier', title: 'If You Cannot Build A School For Them, Do Not Build A Subdivision For Them.' },
-    { tag: 'Press', date: 'Feb 03, 2026', source: 'WCSC News 5', title: 'James Island business owner enters race for SC House 115.' },
-    { tag: 'Op-ed', date: 'Feb 20, 2026', source: 'The State', title: 'The 6% Rate Is A Promise. Honor It.' },
-    { tag: 'Op-ed', date: 'Mar 06, 2026', source: 'FITSNews', title: 'Modernize Advanced Directives — Or Stop Pretending To Care About Aging.' },
-    { tag: 'Press', date: 'Apr 02, 2026', source: 'Live 5 News', title: 'Speaker Smith endorses Garmon for HD-115.' },
-  ];
+function NewsPage({ data }) {
+  const items = ((data && data.news) || []).map(n => ({
+    tag: n.tag, date: n.date_label, source: n.source, title: n.title, url: n.url,
+  }));
   return (
     <main>
       <section style={{ background: 'var(--paper-2)', paddingBottom: 32 }}>
@@ -431,7 +393,9 @@ function NewsPage() {
                   <span className="small">{it.source} · {it.date}</span>
                 </div>
                 <h3 className="h-4" style={{ fontFamily: 'var(--serif)', fontSize: 22 }}>{it.title}</h3>
-                <a href="#read" className="btn-ghost" style={{ fontSize: 14, color: 'var(--crimson)', fontWeight: 600 }}>Read →</a>
+                {it.url
+                  ? <a href={it.url} target="_blank" rel="noreferrer" className="btn-ghost" style={{ fontSize: 14, color: 'var(--crimson)', fontWeight: 600 }}>Read →</a>
+                  : <span className="btn-ghost" style={{ fontSize: 14, color: 'var(--ink-3)', fontWeight: 600 }}>Coming soon</span>}
               </article>
             ))}
           </div>
@@ -441,7 +405,28 @@ function NewsPage() {
   );
 }
 
-function ContactPage() {
+function ContactPage({ data, showToast }) {
+  const s = (data && data.settings) || {};
+  const [form, setForm] = useState({ name: '', email: '', topic: 'General question', message: '' });
+  const [submitting, setSubmitting] = useState(false);
+
+  const send = async (e) => {
+    e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      if (window.submitContact) {
+        await window.submitContact({ name: form.name, email: form.email, topic: form.topic, message: form.message });
+      }
+      setSubmitting(false);
+      (showToast || (() => {}))('Thanks. The campaign team will reply soon.');
+      navigate('/');
+    } catch (err) {
+      setSubmitting(false);
+      (showToast || (() => {}))(err.message || 'Could not send. Please email media@togetherwithgarmon.com.');
+    }
+  };
+
   return (
     <main>
       <section style={{ background: 'var(--paper-2)', paddingBottom: 32 }}>
@@ -454,35 +439,43 @@ function ContactPage() {
         <div className="wrap split" style={{ '--split-gap': '40px' }}>
           <div className="card">
             <Eyebrow>Press</Eyebrow>
-            <p style={{ marginTop: 12, fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--navy)' }}>media@togetherwithgarmon.com</p>
+            <p style={{ marginTop: 12, fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--navy)' }}>{s.pressEmail || 'media@togetherwithgarmon.com'}</p>
             <p className="small">Media kit, interview requests, event credentials. We respond within 24 hours.</p>
 
             <hr className="rule" style={{ margin: '24px 0' }} />
 
             <Eyebrow>General</Eyebrow>
-            <p style={{ marginTop: 12, fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--navy)' }}>hello@togetherwithgarmon.com</p>
-            <p className="small">(843) 555-0115 · M–F, 9 am – 6 pm</p>
+            <p style={{ marginTop: 12, fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--navy)' }}>{s.generalEmail || 'hello@togetherwithgarmon.com'}</p>
+            <p className="small">{s.phone || '(843) 555-0115'} · M–F, 9 am – 6 pm</p>
 
             <hr className="rule" style={{ margin: '24px 0' }} />
 
             <Eyebrow>Mail</Eyebrow>
             <p style={{ marginTop: 12, fontSize: 16 }}>
               Committee to Elect Johnnie Garmon<br />
-              PO Box 30115<br />
-              Charleston, SC 29412
+              {(s.mailingAddress || 'PO Box 30115\nCharleston, SC 29412').split('\n').map((line, i, arr) => (
+                <React.Fragment key={i}>{line}{i < arr.length - 1 && <br />}</React.Fragment>
+              ))}
             </p>
           </div>
           <div className="card">
             <Eyebrow>Send a note</Eyebrow>
-            <form style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}
-              onSubmit={(e) => { e.preventDefault(); navigate('/'); }}>
-              <div className="field"><label>Name</label><input type="text" /></div>
-              <div className="field"><label>Email</label><input type="email" /></div>
-              <div className="field"><label>What's this about?</label>
-                <select><option>General question</option><option>Press inquiry</option><option>Volunteer</option><option>Event hosting</option></select>
+            <form style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }} onSubmit={send}>
+              <div className="field"><label>Name</label>
+                <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
               </div>
-              <div className="field"><label>Message</label><textarea rows="5" /></div>
-              <button className="btn btn-primary" type="submit">Send</button>
+              <div className="field"><label>Email</label>
+                <input type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+              </div>
+              <div className="field"><label>What's this about?</label>
+                <select value={form.topic} onChange={e => setForm({ ...form, topic: e.target.value })}>
+                  <option>General question</option><option>Press inquiry</option><option>Volunteer</option><option>Event hosting</option>
+                </select>
+              </div>
+              <div className="field"><label>Message</label>
+                <textarea rows="5" required value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} />
+              </div>
+              <button className="btn btn-primary" type="submit" disabled={submitting}>{submitting ? 'Sending…' : 'Send'}</button>
             </form>
           </div>
         </div>

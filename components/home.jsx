@@ -1,22 +1,15 @@
 /* global React */
 const { useState, useEffect } = React;
 
-function HomePage({ t, showToast, openNewsletter }) {
-  const tagline = t.tagline;
-  const colorMode = t.colorMode; // navy / crimson / balanced
-  const heroVariant = t.heroVariant; // photoLeft / fullBleed / split
-  const issueStyle = t.issueStyle; // index / bold / photo
-  const showGold = t.showGold;
-
-  const heroBg = '#C8242F';
-  const heroBgDeep = '#7A1019';
+function HomePage({ data, showToast }) {
+  const tagline = data.settings.tagline;
 
   return (
     <main>
       {/* HERO */}
-      <Hero variant={heroVariant} tagline={tagline} bg={heroBg} bgDeep={heroBgDeep} colorMode={colorMode} showGold={showGold} />
+      <Hero tagline={tagline} settings={data.settings} />
 
-      <EndorsementBar />
+      <EndorsementBar endorsements={data.endorsements} />
 
       {/* PILLAR / WORKING PROMISES */}
       <section style={{ background: 'var(--paper)' }}>
@@ -33,7 +26,7 @@ function HomePage({ t, showToast, openNewsletter }) {
             </p>
           </div>
 
-          <PillarsGrid style={issueStyle} showGold={showGold} />
+          <PillarsGrid pillars={data.pillars} />
 
           <div style={{ textAlign: 'center', marginTop: 56 }}>
             <button className="btn btn-secondary btn-lg" onClick={() => navigate('/issues')}>
@@ -43,14 +36,14 @@ function HomePage({ t, showToast, openNewsletter }) {
         </div>
       </section>
 
-      {/* PETITION COUNTER + LIVE SOCIAL PROOF */}
-      <CounterBlock showToast={showToast} showGold={showGold} />
+      {/* PLEDGE COUNTER + LIVE SOCIAL PROOF */}
+      <CounterBlock data={data} showToast={showToast} />
 
       {/* STORY / FOUNDATION */}
-      <StoryBlock />
+      <StoryBlock settings={data.settings} />
 
       {/* EVENTS TEASER */}
-      <EventTeaser />
+      <EventTeaser data={data} />
 
       {/* CLOSING CTA */}
       <ClosingCTA />
@@ -59,10 +52,9 @@ function HomePage({ t, showToast, openNewsletter }) {
 }
 
 /* ── HERO ────────────────────────────────────────────────────── */
-function Hero({ variant, tagline, bg, bgDeep, colorMode, showGold }) {
-  // Civic Modern hero — not a stock-flag explosion.
-  // Headline + tagline + dual CTA + an accent panel that varies by `variant`.
-  const goldDot = showGold ? <span style={{ color: 'var(--gold)' }}>★</span> : null;
+function Hero({ tagline, settings }) {
+  const goldDot = <span style={{ color: 'var(--gold)' }}>★</span>;
+  const bg = '#C8242F', bgDeep = '#7A1019';
 
   return (
     <section className="hero-section" style={{
@@ -115,9 +107,7 @@ function Hero({ variant, tagline, bg, bgDeep, colorMode, showGold }) {
 
           {/* RIGHT — visual */}
           <div className="fade-up" style={{ position: 'relative' }}>
-            {variant === 'photoLeft' && <HeroPhotoCard goldDot={goldDot} />}
-            {variant === 'fullBleed' && <HeroPhotoCard goldDot={goldDot} />}
-            {variant === 'split' && <HeroPhotoCard goldDot={goldDot} />}
+            <HeroPhotoCard goldDot={goldDot} settings={settings} />
           </div>
         </div>
 
@@ -133,7 +123,7 @@ function Hero({ variant, tagline, bg, bgDeep, colorMode, showGold }) {
           <div className="grid grid-3" style={{ gap: 32 }}>
             <StatLine k="30+ years" v="Building businesses across SC" />
             <StatLine k="3 daughters" v="Family rooted in Charleston" />
-            <StatLine k="June 9" v="Republican primary — early vote opens May 26" />
+            <StatLine k={settings.primaryShort || 'June 9'} v={`Republican primary — ${settings.district || 'HD-115'}`} />
           </div>
         </div>
       </div>
@@ -150,10 +140,11 @@ function StatLine({ k, v }) {
   );
 }
 
-function HeroPhotoCard({ goldDot }) {
+function HeroPhotoCard({ goldDot, settings }) {
+  const heroImage = (settings && settings.heroImage) || 'assets/garmon-family.jpg';
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <img src="assets/garmon-family.jpg"
+      <img src={heroImage}
         alt="Johnnie Garmon with his wife and daughter on a Lowcountry boardwalk at golden hour"
         style={{
           width: '100%',
@@ -188,52 +179,17 @@ function HeroPhotoCard({ goldDot }) {
 }
 
 /* ── PILLARS GRID ────────────────────────────────────────────── */
-const PILLARS = [
-  { n: '01', tag: 'Permitting', title: 'Stop Stacking Paper.', body: 'Demand 90-day permit deadlines, public throughput numbers, and accountability when agencies miss them.' },
-  { n: '02', tag: 'Property tax', title: 'Reduce the 6.2% Tax.', body: 'Long-time residents have earned a place to stand. We won\'t tax them out of the homes they built.' },
-  { n: '03', tag: 'Growth', title: 'Concurrency or Bust.', body: 'No new subdivisions where the schools, roads, and stormwater can\'t keep up. Build infrastructure first.' },
-  { n: '04', tag: 'Healthcare', title: 'Aging at Home.', body: 'From advanced directives to in-home care, end-of-life can\'t stay a bureaucratic afterthought.' },
-  { n: '05', tag: 'Business', title: 'Defend Main Street.', body: 'Dram shop reform, permit accountability, and no unfunded mandates dumped on counties.' },
-  { n: '06', tag: 'Education', title: 'Choice and Transparency.', body: 'Parental control, transparent funding, and no DEI mandates inside K–12 classrooms.' },
-];
-
-function PillarsGrid({ style: cardStyle, showGold }) {
+function PillarsGrid({ pillars }) {
+  const list = pillars || [];
   return (
     <div className="grid grid-3" style={{ gap: 24 }}>
-      {PILLARS.map((p, i) => <PillarCard key={p.n} p={p} idx={i} cardStyle={cardStyle} showGold={showGold} />)}
+      {list.map((p, i) => <PillarCard key={p.id || i} p={p} idx={i} />)}
     </div>
   );
 }
 
-function PillarCard({ p, idx, cardStyle, showGold }) {
+function PillarCard({ p }) {
   const [hover, setHover] = useState(false);
-
-  if (cardStyle === 'bold') {
-    const isAccent = idx % 3 === 1;
-    return (
-      <a href="#/issues" onClick={(e) => { e.preventDefault(); navigate('/issues'); }}
-        onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
-        style={{
-          background: isAccent ? 'var(--crimson)' : 'var(--navy)',
-          color: 'var(--paper)',
-          padding: '32px 28px',
-          borderRadius: 4,
-          minHeight: 280,
-          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-          transform: hover ? 'translateY(-3px)' : 'translateY(0)',
-          boxShadow: hover ? 'var(--shadow-lg)' : 'var(--shadow-sm)',
-          transition: 'all .2s ease',
-        }}>
-        <div>
-          <div className="eyebrow" style={{ color: 'rgba(255,255,255,0.7)' }}>{p.n} · {p.tag}</div>
-          <h3 className="h-3" style={{ color: 'var(--paper)', marginTop: 16 }}>{p.title}</h3>
-        </div>
-        <p style={{ color: 'rgba(255,255,255,0.82)', fontSize: 15 }}>{p.body}</p>
-      </a>
-    );
-  }
-
-  // index / default
   return (
     <a href="#/issues" onClick={(e) => { e.preventDefault(); navigate('/issues'); }}
       onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
@@ -251,9 +207,8 @@ function PillarCard({ p, idx, cardStyle, showGold }) {
         transform: hover ? 'translateY(-3px)' : 'translateY(0)',
       }}>
       <div className="between">
-        <div className="serif" style={{ fontSize: 36, fontWeight: 600, color: 'var(--navy)', letterSpacing: '-0.04em', lineHeight: 1 }}>{p.n}</div>
-        {showGold && <span className="pill pill-gold">{p.tag}</span>}
-        {!showGold && <span className="pill">{p.tag}</span>}
+        <div className="serif" style={{ fontSize: 36, fontWeight: 600, color: 'var(--navy)', letterSpacing: '-0.04em', lineHeight: 1 }}>{p.number}</div>
+        <span className="pill pill-gold">{p.tag}</span>
       </div>
       <h3 className="h-3" style={{ marginTop: 4 }}>{p.title}</h3>
       <p style={{ color: 'var(--ink-2)', fontSize: 15, flex: 1 }}>{p.body}</p>
@@ -267,7 +222,14 @@ function PillarCard({ p, idx, cardStyle, showGold }) {
 }
 
 /* ── COUNTER BLOCK ───────────────────────────────────────────── */
-function CounterBlock({ showToast, showGold }) {
+function CounterBlock({ data, showToast }) {
+  const settings = data.settings;
+  const baseCount = Number(settings.pledgeBaseCount) || 847;
+  const goal = Number(settings.pledgeGoal) || 1500;
+  const donorCount = Number(settings.donorCount) || 312;
+  const donorTarget = Number(settings.donorTarget) || 500;
+  const doorsKnocked = Number(settings.doorsKnocked) || 1940;
+  const doorsTarget = Number(settings.doorsTarget) || 5000;
   const [form, setForm] = useState({ first_name: '', last_name: '', email: '', phone: '' });
   const [submitting, setSubmitting] = useState(false);
 
@@ -282,6 +244,7 @@ function CounterBlock({ showToast, showGold }) {
       showToast("Couldn't reach the campaign server. Please try again.");
       return;
     }
+    if (window.mirrorPledge) await window.mirrorPledge(form, 'home_counter');
     setSubmitting(false);
     showToast('Pledge recorded. Welcome to the team.');
     setForm({ first_name: '', last_name: '', email: '', phone: '' });
@@ -294,17 +257,17 @@ function CounterBlock({ showToast, showGold }) {
           <div>
             <Eyebrow>Live</Eyebrow>
             <h2 className="h-1" style={{ marginTop: 16 }}>
-              Already <span style={{ color: 'var(--crimson)' }}>847 neighbors</span> have pledged their vote.
+              Already <span style={{ color: 'var(--crimson)' }}>{baseCount.toLocaleString()} neighbors</span> have pledged their vote.
             </h2>
             <p className="lede" style={{ marginTop: 16, maxWidth: 480 }}>
               The pledge isn't a mailing-list trick. It's the public record of neighbors who've
-              committed to vote for Johnnie in the June 9 primary and the November general.
+              committed to vote for Johnnie in the {settings.primaryShort} primary and the November general.
             </p>
 
             <div className="grid grid-3" style={{ gap: 16, marginTop: 36 }}>
-              <CounterTile label="Vote pledges" target={847} cap={1500} accent="var(--crimson)" />
-              <CounterTile label="Contributors" target={312} cap={500} accent="var(--navy)" />
-              <CounterTile label="Doors knocked" target={1940} cap={5000} accent={showGold ? 'var(--gold)' : 'var(--navy-soft)'} />
+              <CounterTile label="Vote pledges"  target={baseCount}    cap={goal}        accent="var(--crimson)" />
+              <CounterTile label="Contributors"  target={donorCount}   cap={donorTarget} accent="var(--navy)" />
+              <CounterTile label="Doors knocked" target={doorsKnocked} cap={doorsTarget} accent="var(--gold)" />
             </div>
           </div>
 
@@ -367,12 +330,13 @@ function CounterTile({ label, target, cap, accent }) {
 }
 
 /* ── STORY BLOCK ─────────────────────────────────────────────── */
-function StoryBlock() {
+function StoryBlock({ settings }) {
+  const storyImage = (settings && settings.storyImage) || 'assets/garmon-family-portrait.jpg';
   return (
     <section>
       <div className="wrap">
         <div className="grid grid-2" style={{ gap: 64, alignItems: 'center' }}>
-          <img src="assets/garmon-family-portrait.jpg"
+          <img src={storyImage}
             alt="Johnnie Garmon with Kelley and their three daughters on the front steps"
             style={{
               width: '100%',
@@ -413,7 +377,11 @@ function StoryBlock() {
 }
 
 /* ── EVENT TEASER ────────────────────────────────────────────── */
-function EventTeaser() {
+function EventTeaser({ data }) {
+  const events = (data && data.events) || [];
+  const featured = events.find(e => e.tag === 'Featured') || events[0];
+  const eventImage = (data && data.settings && data.settings.eventImage) || 'assets/garmon-rally.jpg';
+  if (!featured) return null;
   return (
     <section style={{ background: 'var(--navy-deep)', color: 'var(--paper)' }}>
       <div className="wrap">
@@ -422,24 +390,24 @@ function EventTeaser() {
             <Eyebrow color="var(--gold-soft)">Next event</Eyebrow>
             <div style={{ marginTop: 16, display: 'flex', alignItems: 'baseline', gap: 24, flexWrap: 'wrap' }}>
               <div style={{ fontFamily: 'var(--serif)', fontSize: 64, fontWeight: 600, color: 'var(--paper)', lineHeight: 1 }}>
-                May 28
+                {featured.date_label}
               </div>
               <div style={{ fontSize: 14, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--gold-soft)' }}>
-                Thursday · 5:30 – 7:30 pm
+                {featured.day_label} · {featured.time_label}
               </div>
             </div>
             <h3 className="h-2" style={{ color: 'var(--paper)', marginTop: 16 }}>
-              Happy Hour with Johnnie — Kiawah & Seabrook neighbors.
+              {featured.title}
             </h3>
             <p style={{ color: 'rgba(255,255,255,0.78)', fontSize: 17, maxWidth: 520, marginTop: 14 }}>
-              Drinks on the deck, twenty minutes of remarks, then real Q&A. Hosted by Bill & Patty Holcombe at the Beach Club.
+              {featured.location} · Hosted by {featured.host}.
             </p>
             <div style={{ marginTop: 24, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               <button className="btn btn-primary" onClick={() => navigate('/events')}>RSVP — free</button>
               <button onClick={() => navigate('/events')} className="btn" style={{ background: 'transparent', color: 'var(--paper)', border: '1px solid rgba(255,255,255,0.3)' }}>All events</button>
             </div>
           </div>
-          <img src="assets/garmon-rally.jpg"
+          <img src={eventImage}
             alt="Johnnie Garmon and supporters holding campaign signs at a rally"
             style={{
               width: '100%',
@@ -458,6 +426,8 @@ function EventTeaser() {
 }
 
 function ClosingCTA() {
+  const settings = (window.SITE_DATA && window.SITE_DATA.settings) || {};
+  const primaryShort = settings.primaryShort || 'June 9';
   return (
     <section style={{ background: 'var(--paper-2)' }}>
       <div className="wrap-narrow" style={{ textAlign: 'center' }}>
@@ -466,7 +436,7 @@ function ClosingCTA() {
           Six weeks. <span style={{ color: 'var(--crimson)' }}>One vote that matters.</span>
         </h2>
         <p className="lede" style={{ marginTop: 18, maxWidth: 620, margin: '18px auto 0' }}>
-          The June 9 primary will be decided by a few thousand neighbors. Pick the action that fits your week:
+          The {primaryShort} primary will be decided by a few thousand neighbors. Pick the action that fits your week:
         </p>
         <div style={{ marginTop: 36, display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
           <button className="btn btn-donate-light btn-lg" onClick={() => navigate('/donate')}>Donate</button>

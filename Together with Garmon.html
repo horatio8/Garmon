@@ -16,6 +16,9 @@
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="lib/data.js"></script>
 
 <script type="text/babel" src="components/shared.jsx"></script>
 <script type="text/babel" src="components/home.jsx"></script>
@@ -24,21 +27,6 @@
 
 <script type="text/babel">
 const { useState, useEffect, useCallback } = React;
-
-const SITE_DEFAULTS = {
-  tagline: "Together with Garmon.",
-  primaryCTA: "Donate",
-  heroVariant: "photoLeft",
-  colorMode: "balanced",
-  headlineSerif: "Source Serif 4",
-  density: "regular",
-  showGold: true,
-  endorsementStyle: "logos",
-};
-
-const DONATE_URL = 'https://secure.anedot.com/johnnie-garmon-for-sc115/donate?exitIntent=true';
-window.DONATE_URL = DONATE_URL;
-window.goDonate = () => { window.location.href = DONATE_URL; };
 
 function getRoute() {
   const h = window.location.hash.replace(/^#/, '') || '/';
@@ -50,21 +38,30 @@ window.navigate = (path) => {
   window.scrollTo({ top: 0, behavior: 'instant' });
 };
 
-// Auto-rolling election banner: primary first, then general.
-const ELECTIONS = [
-  { label: 'Primary', dateStr: 'June 9, 2026',     shortDate: 'June 9', date: new Date(2026, 5, 9) },
-  { label: 'General', dateStr: 'November 3, 2026', shortDate: 'Nov 3',  date: new Date(2026, 10, 3) },
-];
-function getElectionInfo() {
+function getElectionInfo(settings) {
   const now = new Date();
-  const upcoming = ELECTIONS.find(e => e.date >= now) || ELECTIONS[ELECTIONS.length - 1];
+  const elections = [
+    { label: 'Primary', dateStr: settings.primaryLong, shortDate: settings.primaryShort, date: new Date(settings.primaryDate + 'T00:00:00') },
+    { label: 'General', dateStr: settings.generalLong, shortDate: settings.generalShort, date: new Date(settings.generalDate + 'T00:00:00') },
+  ];
+  const upcoming = elections.find(e => e.date >= now) || elections[elections.length - 1];
   return { label: upcoming.label, dateStr: upcoming.dateStr, shortDate: upcoming.shortDate };
 }
 
 function App() {
-  const t = SITE_DEFAULTS;
+  const [data, setData] = useState(null);
   const [route, setRoute] = useState(getRoute());
   const [toast, setToast] = useState('');
+
+  useEffect(() => {
+    window.loadSiteData().then(d => {
+      setData(d);
+      window.SITE_DATA = d;
+      window.DONATE_URL = d.settings.donateUrl;
+      window.PLEDGE_RECEIVER_URL = d.settings.pledgeReceiverUrl;
+      window.goDonate = () => { window.location.href = d.settings.donateUrl; };
+    });
+  }, []);
 
   useEffect(() => {
     const onHash = () => setRoute(getRoute());
@@ -73,38 +70,46 @@ function App() {
   }, []);
 
   const showToast = useCallback((msg) => setToast(msg), []);
-  const [election, setElection] = useState(getElectionInfo);
+  const [election, setElection] = useState(null);
   useEffect(() => {
-    const id = setInterval(() => setElection(getElectionInfo()), 60_000);
+    if (!data) return;
+    setElection(getElectionInfo(data.settings));
+    const id = setInterval(() => setElection(getElectionInfo(data.settings)), 60_000);
     return () => clearInterval(id);
-  }, []);
+  }, [data]);
 
-  // Donate is hosted externally (Anedot). If anyone lands on /#/donate
-  // (old links, deep-linked share, etc.), bounce them to the live form.
   useEffect(() => {
-    if (route === '/donate') window.location.replace(DONATE_URL);
-  }, [route]);
+    if (data && route === '/donate') window.location.replace(data.settings.donateUrl);
+  }, [route, data]);
+
+  if (!data) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-3)', fontFamily: 'var(--sans)' }}>
+        Loading…
+      </div>
+    );
+  }
 
   let page;
-  if (route === '/') page = <HomePage t={t} showToast={showToast} />;
+  if (route === '/') page = <HomePage data={data} showToast={showToast} />;
   else if (route === '/donate') page = <div style={{ padding: '120px 24px', textAlign: 'center' }}>Redirecting to the secure donation page…</div>;
-  else if (route === '/petition') page = <PetitionPage showToast={showToast} />;
-  else if (route === '/volunteer') page = <VolunteerPage showToast={showToast} />;
-  else if (route === '/events') page = <EventsPage showToast={showToast} />;
-  else if (route === '/about') page = <AboutPage />;
-  else if (route === '/issues') page = <IssuesPage />;
-  else if (route.startsWith('/issues/')) page = <IssueDetail slug={route.split('/')[2]} />;
-  else if (route === '/news') page = <NewsPage />;
-  else if (route === '/contact') page = <ContactPage />;
-  else page = <HomePage t={t} showToast={showToast} />;
+  else if (route === '/petition') page = <PetitionPage data={data} showToast={showToast} />;
+  else if (route === '/volunteer') page = <VolunteerPage data={data} showToast={showToast} />;
+  else if (route === '/events') page = <EventsPage data={data} showToast={showToast} />;
+  else if (route === '/about') page = <AboutPage data={data} />;
+  else if (route === '/issues') page = <IssuesPage data={data} />;
+  else if (route.startsWith('/issues/')) page = <IssueDetail data={data} slug={route.split('/')[2]} />;
+  else if (route === '/news') page = <NewsPage data={data} />;
+  else if (route === '/contact') page = <ContactPage data={data} showToast={showToast} />;
+  else page = <HomePage data={data} showToast={showToast} />;
 
   return (
     <div data-screen-label={`Route ${route}`}>
-      <Nav route={route} election={election} />
+      <Nav route={route} election={election} settings={data.settings} />
       {page}
-      <Footer />
+      <Footer settings={data.settings} />
 
-      <a className="sticky-donate" href={DONATE_URL}>
+      <a className="sticky-donate" href={data.settings.donateUrl}>
         <span style={{ width: 8, height: 8, background: 'var(--crimson)', borderRadius: '50%' }} className="pulse-dot" />
         Donate
       </a>
