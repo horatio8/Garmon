@@ -438,22 +438,28 @@ function ContactPage({ data, showToast }) {
       <section style={{ paddingTop: 0 }}>
         <div className="wrap split" style={{ '--split-gap': '40px' }}>
           <div className="card">
-            <Eyebrow>Press</Eyebrow>
-            <p style={{ marginTop: 12, fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--navy)' }}>{s.pressEmail || 'media@togetherwithgarmon.com'}</p>
-            <p className="small">Media kit, interview requests, event credentials. We respond within 24 hours.</p>
+            {s.pressEmail && <>
+              <Eyebrow>Press</Eyebrow>
+              <p style={{ marginTop: 12, fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--navy)' }}>{s.pressEmail}</p>
+              <hr className="rule" style={{ margin: '24px 0' }} />
+            </>}
 
-            <hr className="rule" style={{ margin: '24px 0' }} />
+            <Eyebrow>Phone</Eyebrow>
+            <p style={{ marginTop: 12, fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--navy)' }}>{s.phone || '(843) 555-0115'}</p>
+            <p className="small">{s.hours || 'M–F, 9 am – 5 pm'}</p>
 
-            <Eyebrow>General</Eyebrow>
-            <p style={{ marginTop: 12, fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--navy)' }}>{s.generalEmail || 'hello@togetherwithgarmon.com'}</p>
-            <p className="small">{s.phone || '(843) 555-0115'} · M–F, 9 am – 6 pm</p>
+            {s.generalEmail && <>
+              <hr className="rule" style={{ margin: '24px 0' }} />
+              <Eyebrow>General</Eyebrow>
+              <p style={{ marginTop: 12, fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--navy)' }}>{s.generalEmail}</p>
+            </>}
 
             <hr className="rule" style={{ margin: '24px 0' }} />
 
             <Eyebrow>Mail</Eyebrow>
             <p style={{ marginTop: 12, fontSize: 16 }}>
               Committee to Elect Johnnie Garmon<br />
-              {(s.mailingAddress || 'PO Box 30115\nCharleston, SC 29412').split('\n').map((line, i, arr) => (
+              {(s.mailingAddress || '130 Gardeners Circle, PMB 173\nJohns Island, SC 29455').split('\n').map((line, i, arr) => (
                 <React.Fragment key={i}>{line}{i < arr.length - 1 && <br />}</React.Fragment>
               ))}
             </p>

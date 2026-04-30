@@ -14,31 +14,34 @@ set data = jsonb_build_object(
   'generalShort',    'Nov 3',
   'generalLong',     'November 3, 2026',
   'district',        'HD-115',
-  'pledgeGoal',      1500,
-  'pledgeBaseCount', 847,
+  'pledgeGoal',      2000,
+  'pledgeBaseCount', 1103,
   'donorCount',      312,
   'donorTarget',     500,
   'doorsKnocked',    1940,
   'doorsTarget',     5000,
   'heroImage',       'assets/garmon-family.jpg',
-  'storyImage',      'assets/garmon-family-portrait.jpg',
+  'storyImage',      'assets/family-2026.jpg',
   'eventImage',      'assets/garmon-rally.jpg',
-  'aboutImage',      '',
+  'aboutImage',      'assets/johnnie-portrait-2026.jpg',
+  'bookImage',       'assets/failure-disrupted-cover.jpg',
+  'bookUrl',         'https://stevensongroup.com',
   'logoImage',       'assets/garmon-logo.jpeg',
   'logoImageWhite',  'assets/garmon-logo-transparent.png',
-  'pressEmail',      'media@togetherwithgarmon.com',
-  'generalEmail',    'hello@togetherwithgarmon.com',
+  'pressEmail',      '',
+  'generalEmail',    '',
   'phone',           '(843) 555-0115',
-  'mailingAddress',  'PO Box 30115\nCharleston, SC 29412',
+  'hours',           'M–F, 9 am – 5 pm',
+  'mailingAddress',  '130 Gardeners Circle, PMB 173\nJohns Island, SC 29455',
   'paidForBy',       'Paid for by the Committee to Elect Johnnie Garmon. Not authorized by any candidate or candidate''s committee. Contributions are not tax deductible.',
   'aboutHeadline',   'Built one job at a time. Built here.',
   'aboutLede',       'The story they''re trying to fit into a yard sign is, like most useful stories, longer than that.',
-  'aboutArc1',       'Johnnie was raised in subsidized housing in upstate South Carolina. He was the first in his family to finish college, paying his way through the College of Charleston by working nights in restaurants and weekends in roofing.',
-  'aboutArc2',       'Over the next thirty years he built three businesses — a home services company, a small commercial real-estate practice, and an aging-at-home advisory firm that today serves families across the Lowcountry.',
+  'aboutArc1',       'Johnnie was raised right here in the South — in subsidized housing, the first in his family to finish college, working his way through school.',
+  'aboutArc2',       'Over the next thirty years he built six businesses — a home services company, a small commercial real-estate practice, and an aging-at-home advisory firm that today serves families across the Lowcountry.',
   'aboutQuote',      'South Carolina took a chance on a kid with nothing but stubbornness and a public-school education. I''m running so the next kid gets the same chance.',
-  'aboutFamily',     'Married thirty-one years to Kelley. Father of three daughters — Caroline, Avery, and June. Member of Holy Cross Episcopal. Little League coach for nine seasons.',
+  'aboutFamily',     'Married thirty-one years to his childhood sweetheart, Kelley. Father of three daughters — Caroline, Reagan, and Zoe. Member of James Island Christian Church. Little League coach for nine seasons.',
   'aboutBook',       '<em>Failure Disrupted</em> is Johnnie''s account of three near-bankruptcies, the hard-won management principles that came from them, and what conservative governance can learn from the discipline of a small balance sheet.',
-  'aboutService',    'Appointed by Governor Henry McMaster to the South Carolina Healthcare Study Committee. Past board member of the Charleston Metro Chamber. Active with the Lowcountry Land Trust.'
+  'aboutService',    'Appointed by Governor Henry McMaster to the South Carolina Healthcare Study Committee. Board member, Columbia International University. Board member, Berkeley-Charleston-Dorchester Council of Governments (BCDC). Active in the Lowcountry Exchange Club.'
 )
 where id = 1;
 
@@ -54,7 +57,7 @@ on conflict do nothing;
 insert into pillars (number, tag, title, body, sort_order) values
   ('01','Permitting','Stop Stacking Paper.','Demand 90-day permit deadlines, public throughput numbers, and accountability when agencies miss them.', 10),
   ('02','Property tax','Reduce the 6.2% Tax.','Long-time residents have earned a place to stand. We won''t tax them out of the homes they built.', 20),
-  ('03','Growth','Concurrency or Bust.','No new subdivisions where the schools, roads, and stormwater can''t keep up. Build infrastructure first.', 30),
+  ('03','Growth','Roads Before Roofs.','No new subdivisions where the schools, roads, and stormwater can''t keep up. Build infrastructure first.', 30),
   ('04','Healthcare','Aging at Home.','From advanced directives to in-home care, end-of-life can''t stay a bureaucratic afterthought.', 40),
   ('05','Business','Defend Main Street.','Dram shop reform, permit accountability, and no unfunded mandates dumped on counties.', 50),
   ('06','Education','Choice and Transparency.','Parental control, transparent funding, and no DEI mandates inside K–12 classrooms.', 60)
@@ -64,7 +67,7 @@ on conflict do nothing;
 insert into issues (slug, number, tag, title, stance, sort_order) values
   ('permitting','01','Permitting','Stop Stacking Paper.','Demand 90-day permit deadlines and public throughput numbers.', 10),
   ('property','02','Property tax','Reduce the 6.2% Tax.','Long-time residents have earned a place to stand.', 20),
-  ('concurrency','03','Growth','Concurrency or Bust.','No subdivisions where the schools and roads can''t keep up.', 30),
+  ('concurrency','03','Growth','Roads Before Roofs.','No subdivisions where the schools and roads can''t keep up.', 30),
   ('healthcare','04','Healthcare','Aging at Home.','Modernize advanced directives and in-home care.', 40),
   ('small-biz','05','Business','Defend Main Street.','Dram shop reform and permit accountability.', 50),
   ('education','06','Education','Choice and Transparency.','Parental control and transparent K–12 funding.', 60),
@@ -92,9 +95,9 @@ where slug = 'permitting';
 -- ── Events ──────────────────────────────────────────────────────────────────
 insert into events (date_label, day_label, time_label, title, location, host, tag, sort_order) values
   ('May 28','Thu','5:30 – 7:30 pm','Happy Hour with Johnnie','Beach Club, Kiawah Island','Bill & Patty Holcombe','Featured',10),
-  ('May 31','Sun','10:00 am','Coffee on the Porch','James Island, Avondale','Carol Wieters',null,20),
-  ('Jun 02','Tue','6:00 pm','Folly Beach Town Hall','Folly River Park Pavilion','Open to all',null,30),
-  ('Jun 04','Thu','7:00 pm','Healthcare & Aging Panel','St. Andrew''s Episcopal, James Is.','With Dr. Lila Pope',null,40),
+  ('May 31','Sun','10:00 am','Coffee on the Porch','James Island, Avondale','Carol Wieters','5 for 5',20),
+  ('Jun 02','Tue','6:00 pm','Folly Beach Town Hall','Folly River Park Pavilion','James Teeple',null,30),
+  ('Jun 04','Thu','7:00 pm','Healthcare & Aging Panel','St. Andrew''s Episcopal, James Is.','Warren Sloane',null,40),
   ('Jun 06','Sat','8:00 am – noon','Door-knock Saturday','Riverland Terrace HQ','Volunteer event','GOTV',50),
   ('Jun 08','Mon','6:30 pm','Election Eve Rally','Riverfront Park, North Charleston','With Speaker Smith',null,60)
 on conflict do nothing;

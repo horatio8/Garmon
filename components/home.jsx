@@ -18,7 +18,7 @@ function HomePage({ data, showToast }) {
             <div>
               <Eyebrow>The platform</Eyebrow>
               <h2 className="h-1" style={{ marginTop: 16 }}>
-                Six things Johnnie will <em style={{ color: 'var(--crimson)', fontStyle: 'italic' }}>actually fight for</em> in Columbia.
+                Six things Johnnie will <em style={{ color: 'var(--crimson)', fontStyle: 'italic' }}>actually fix</em> in Columbia.
               </h2>
             </div>
             <p className="lede" style={{ maxWidth: 460 }}>
@@ -75,7 +75,10 @@ function Hero({ tagline, settings }) {
         <div className="grid grid-2" style={{ gap: 56, alignItems: 'start' }}>
           {/* LEFT — message */}
           <div className="fade-up hero-message">
-            <Eyebrow color="var(--gold-soft)">Republican · SC House Dist. 115</Eyebrow>
+            <div className="hero-eyebrow">
+              <span className="dot" style={{ background: 'var(--gold)' }} />
+              Republican · SC House Dist. 115
+            </div>
             <h1 className="h-display" style={{ color: 'var(--paper)', marginTop: 22, lineHeight: 0.96 }}>
               {tagline}
             </h1>
@@ -96,13 +99,6 @@ function Hero({ tagline, settings }) {
                 Pledge my vote
               </button>
             </div>
-
-            <div style={{ display: 'flex', gap: 32, marginTop: 48, flexWrap: 'wrap', alignItems: 'center' }}>
-              <Stars count={5} color="var(--gold-soft)" />
-              <div className="fineprint" style={{ color: 'rgba(255,255,255,0.7)' }}>
-                Joined by <strong style={{ color: 'var(--paper)' }}>847 neighbors</strong> who've pledged their vote · <strong style={{ color: 'var(--paper)' }}>312 donors</strong> · <strong style={{ color: 'var(--paper)' }}>1,940 doors knocked</strong>
-              </div>
-            </div>
           </div>
 
           {/* RIGHT — visual */}
@@ -121,9 +117,9 @@ function Hero({ tagline, settings }) {
           padding: '28px 32px',
         }}>
           <div className="grid grid-3" style={{ gap: 32 }}>
-            <StatLine k="30+ years" v="Building businesses across SC" />
-            <StatLine k="3 daughters" v="Family rooted in Charleston" />
-            <StatLine k={settings.primaryShort || 'June 9'} v={`Republican primary — ${settings.district || 'HD-115'}`} />
+            <StatLine k="25+ years" v="Building businesses across SC" />
+            <StatLine k="10,000+"   v="Patients served" />
+            <StatLine k="250+"      v="Student jobs created" />
           </div>
         </div>
       </div>
@@ -224,8 +220,8 @@ function PillarCard({ p }) {
 /* ── COUNTER BLOCK ───────────────────────────────────────────── */
 function CounterBlock({ data, showToast }) {
   const settings = data.settings;
-  const baseCount = Number(settings.pledgeBaseCount) || 847;
-  const goal = Number(settings.pledgeGoal) || 1500;
+  const baseCount = Number(settings.pledgeBaseCount) || 1103;
+  const goal = Number(settings.pledgeGoal) || 2000;
   const donorCount = Number(settings.donorCount) || 312;
   const donorTarget = Number(settings.donorTarget) || 500;
   const doorsKnocked = Number(settings.doorsKnocked) || 1940;
@@ -257,17 +253,15 @@ function CounterBlock({ data, showToast }) {
           <div>
             <Eyebrow>Live</Eyebrow>
             <h2 className="h-1" style={{ marginTop: 16 }}>
-              Already <span style={{ color: 'var(--crimson)' }}>{baseCount.toLocaleString()} neighbors</span> have pledged their vote.
+              Already <span style={{ color: 'var(--crimson)' }}>{baseCount.toLocaleString()} neighbors</span> have pledged their support.
             </h2>
             <p className="lede" style={{ marginTop: 16, maxWidth: 480 }}>
               The pledge isn't a mailing-list trick. It's the public record of neighbors who've
               committed to vote for Johnnie in the {settings.primaryShort} primary and the November general.
             </p>
 
-            <div className="grid grid-3" style={{ gap: 16, marginTop: 36 }}>
-              <CounterTile label="Vote pledges"  target={baseCount}    cap={goal}        accent="var(--crimson)" />
-              <CounterTile label="Contributors"  target={donorCount}   cap={donorTarget} accent="var(--navy)" />
-              <CounterTile label="Doors knocked" target={doorsKnocked} cap={doorsTarget} accent="var(--gold)" />
+            <div style={{ marginTop: 36, maxWidth: 320 }}>
+              <CounterTile label="Vote pledges" target={baseCount} cap={goal} accent="var(--crimson)" />
             </div>
           </div>
 
@@ -355,7 +349,7 @@ function StoryBlock({ settings }) {
               <span style={{ color: 'var(--crimson)' }}>Built by South Carolina.</span>
             </h2>
             <p className="lede" style={{ marginTop: 18 }}>
-              Johnnie didn't inherit a business or a name. He built three companies over thirty
+              Johnnie didn't inherit a business or a name. He built six companies over thirty
               years — in healthcare, real estate, and home services — through ordinary,
               unglamorous work and a refusal to confuse activity with results.
             </p>
@@ -365,9 +359,32 @@ function StoryBlock({ settings }) {
               helping families plan for aging-at-home and end-of-life decisions that the state
               has been content to ignore.
             </p>
+
+            {(settings && settings.bookImage) && (
+              <a href={(settings && settings.bookUrl) || 'https://stevensongroup.com'}
+                 target="_blank" rel="noreferrer"
+                 style={{ display: 'inline-flex', alignItems: 'center', gap: 18, marginTop: 24,
+                          padding: 14, background: 'var(--paper-2)', borderRadius: 6,
+                          border: '1px solid var(--hairline)', textDecoration: 'none' }}>
+                <img src={settings.bookImage} alt="Failure Disrupted by Johnnie Garmon"
+                     style={{ width: 80, height: 'auto', display: 'block', boxShadow: 'var(--shadow-sm)' }} />
+                <div>
+                  <div className="serif" style={{ fontSize: 18, fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.2 }}>
+                    <em>Failure Disrupted</em>
+                  </div>
+                  <div className="small" style={{ marginTop: 4, color: 'var(--ink-3)' }}>
+                    Get the book →
+                  </div>
+                </div>
+              </a>
+            )}
+
             <div style={{ marginTop: 28, display: 'flex', gap: 14, flexWrap: 'wrap' }}>
               <button className="btn btn-secondary" onClick={() => navigate('/about')}>Read his story →</button>
-              <a href="#book" className="btn btn-ghost">Get <em>Failure Disrupted</em> <span className="arrow">→</span></a>
+              <a href={(settings && settings.bookUrl) || 'https://stevensongroup.com'}
+                 target="_blank" rel="noreferrer" className="btn btn-ghost">
+                Get <em>Failure Disrupted</em> <span className="arrow">→</span>
+              </a>
             </div>
           </div>
         </div>
@@ -433,7 +450,7 @@ function ClosingCTA() {
       <div className="wrap-narrow" style={{ textAlign: 'center' }}>
         <Stars count={5} />
         <h2 className="h-1" style={{ marginTop: 20 }}>
-          Six weeks. <span style={{ color: 'var(--crimson)' }}>One vote that matters.</span>
+          <span style={{ color: 'var(--crimson)' }}>One vote that matters.</span>
         </h2>
         <p className="lede" style={{ marginTop: 18, maxWidth: 620, margin: '18px auto 0' }}>
           The {primaryShort} primary will be decided by a few thousand neighbors. Pick the action that fits your week:

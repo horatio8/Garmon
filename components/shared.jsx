@@ -59,7 +59,6 @@ function Nav({ route, election, settings }) {
     { label: 'Issues',    path: '/issues' },
     { label: 'Events',    path: '/events' },
     { label: 'Volunteer', path: '/volunteer' },
-    { label: 'News',      path: '/news' },
     { label: 'Contact',   path: '/contact' },
   ];
   return (
@@ -167,7 +166,6 @@ function Footer({ settings }) {
               <li><a href="#/issues" onClick={(e) => { e.preventDefault(); navigate('/issues'); }}>Issues</a></li>
               <li><a href="#/events" onClick={(e) => { e.preventDefault(); navigate('/events'); }}>Events</a></li>
               <li><a href="#/volunteer" onClick={(e) => { e.preventDefault(); navigate('/volunteer'); }}>Volunteer</a></li>
-              <li><a href="#/news" onClick={(e) => { e.preventDefault(); navigate('/news'); }}>News</a></li>
             </ul>
           </div>
           <div>
@@ -248,7 +246,7 @@ function EndorsementBar({ compact = false, endorsements }) {
       <div className="wrap endorsement-row">
         <div className="eyebrow endorsement-label">
           <span className="dot" style={{ background: 'var(--gold)' }} />
-          Endorsed by
+          Trusted by
         </div>
         <ul className="endorsement-list">
           {orgs.map((o, i) => (

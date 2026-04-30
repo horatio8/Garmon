@@ -552,6 +552,25 @@ hr.rule-thick {
 .show-nav { display: none; }
 @media (max-width: 1080px) { .show-nav { display: block; } }
 
+/* ── Hero eyebrow (larger than the standard .eyebrow) ────────── */
+.hero-eyebrow {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero-eyebrow .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+@media (max-width: 600px) { .hero-eyebrow { font-size: 13px; letter-spacing: 0.16em; } }
+
 /* ── Hero (responsive top padding) ────────────────────────────── */
 .hero-section { padding: 72px 0 0; }
 .hero-message { padding-top: 24px; }

@@ -36,8 +36,8 @@ window.submitPledge = async function submitPledge(formEl) {
 
 function PetitionPage({ data, showToast }) {
   const settings = (data && data.settings) || {};
-  const goal = Number(settings.pledgeGoal) || 1500;
-  const baseCount = Number(settings.pledgeBaseCount) || 847;
+  const goal = Number(settings.pledgeGoal) || 2000;
+  const baseCount = Number(settings.pledgeBaseCount) || 1103;
   const [pledged, setPledged] = useState(false);
   const [count, setCount] = useState(baseCount);
   const [form, setForm] = useState({
@@ -84,7 +84,7 @@ function PetitionPage({ data, showToast }) {
           <Eyebrow>The Public Record</Eyebrow>
           <h1 className="h-display" style={{ marginTop: 18 }}>
             Stand on the record.<br />
-            <span style={{ color: 'var(--crimson)' }}>Pledge my vote.</span>
+            <span style={{ color: 'var(--crimson)' }}>Pledge your vote.</span>
           </h1>
           <p className="lede" style={{ marginTop: 22, maxWidth: 580, margin: '22px auto 0' }}>
             "I'll vote for Johnnie Garmon for SC House District 115 in the {settings.primaryShort || 'June 9'} Republican
