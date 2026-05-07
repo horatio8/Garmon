@@ -2,7 +2,9 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/", "destination": "/Together%20with%20Garmon.html" }
+    { "source": "/", "destination": "/Together%20with%20Garmon.html" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/admin/", "destination": "/admin.html" }
   ],
   "headers": [
     {
