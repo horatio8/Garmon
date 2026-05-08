@@ -53,6 +53,10 @@ function Eyebrow({ children, dot = true, color }) {
 function Nav({ route, election, settings }) {
   const e = election || { label: 'Primary', dateStr: 'June 9, 2026', shortDate: 'June 9' };
   const district = (settings && settings.district) || 'HD-115';
+  const earlyVoteDays = (() => {
+    const target = new Date(2026, 4, 26); // May 26, 2026
+    return Math.ceil((target - new Date()) / 86400000);
+  })();
   const [open, setOpen] = useState(false);
   const items = [
     { label: 'About',     path: '/about' },
@@ -72,12 +76,17 @@ function Nav({ route, election, settings }) {
         fontSize: 12, letterSpacing: '0.06em',
       }}>
         <div className="wrap" style={{ display: 'flex', justifyContent: 'space-between', padding: '8px var(--gutter)', gap: 16, whiteSpace: 'nowrap' }}>
-          <span style={{ flex: '0 1 auto', minWidth: 0 }}>
+          <span style={{ flex: '0 1 auto', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
             <span style={{ color: '#FFE9A8' }}>●</span>{' '}
-            <strong>{e.label}:</strong> {e.dateStr}
+            <strong>Republican Primary:</strong> June 9, 2026
+            <span className="hide-mobile" style={{ opacity: 0.55, margin: '0 10px' }}>·</span>
+            <span className="hide-mobile"><strong>Early voting:</strong> May 26, 2026</span>
           </span>
           <span className="hide-nav" style={{ flex: '0 0 auto' }}>
-            {e.shortDate} · {district}
+            {earlyVoteDays > 1 ? `${earlyVoteDays} days to early voting`
+              : earlyVoteDays === 1 ? '1 day to early voting'
+              : earlyVoteDays === 0 ? 'Early voting starts today'
+              : 'Early voting underway'}
           </span>
         </div>
       </div>
