@@ -265,7 +265,7 @@ function CounterBlock({ data, showToast }) {
               </div>
               <div className="field">
                 <label htmlFor="hp-phone">Cell / Mobile phone</label>
-                <input id="hp-phone" name="phone" type="tel" placeholder="(843) 555-0115" required
+                <input id="hp-phone" name="phone" type="tel" placeholder="(843) 989-0843" required
                   value={form.phone}
                   onChange={e => setForm({ ...form, phone: e.target.value })} />
               </div>

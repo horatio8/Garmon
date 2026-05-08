@@ -445,7 +445,7 @@ function ContactPage({ data, showToast }) {
             </>}
 
             <Eyebrow>Phone</Eyebrow>
-            <p style={{ marginTop: 12, fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--navy)' }}>{s.phone || '(843) 555-0115'}</p>
+            <p style={{ marginTop: 12, fontFamily: 'var(--serif)', fontSize: 22, color: 'var(--navy)' }}>{s.phone || '(843) 989-0843'}</p>
             <p className="small">{s.hours || 'M–F, 9 am – 5 pm'}</p>
 
             {s.generalEmail && <>

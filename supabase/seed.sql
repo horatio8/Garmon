@@ -30,7 +30,7 @@ set data = jsonb_build_object(
   'logoImageWhite',  'assets/garmon-logo-transparent.png',
   'pressEmail',      '',
   'generalEmail',    '',
-  'phone',           '(843) 555-0115',
+  'phone',           '(843) 989-0843',
   'hours',           'M–F, 9 am – 5 pm',
   'mailingAddress',  '130 Gardeners Circle, PMB 173\nJohns Island, SC 29455',
   'paidForBy',       'Paid for by the Committee to Elect Johnnie Garmon. Not authorized by any candidate or candidate''s committee. Contributions are not tax deductible.',

@@ -133,7 +133,7 @@ function PetitionPage({ data, showToast }) {
                       <input id="pl-phone" name="phone" type="tel" required
                         value={form.phone}
                         onChange={e => setForm({ ...form, phone: e.target.value })}
-                        placeholder="(843) 555-0115" />
+                        placeholder="(843) 989-0843" />
                       <span className="help">Used only for primary-day reminders. Never sold.</span>
                     </div>
 
