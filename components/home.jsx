@@ -341,7 +341,7 @@ function StoryBlock({ settings }) {
             </p>
 
             {(settings && settings.bookImage) && (
-              <a href={(settings && settings.bookUrl) || 'https://stevensongroup.com'}
+              <a href={(settings && settings.bookUrl) || 'https://theperissosgroup.com'}
                  target="_blank" rel="noreferrer"
                  style={{ display: 'inline-flex', alignItems: 'center', gap: 18, marginTop: 24,
                           padding: 14, background: 'var(--paper-2)', borderRadius: 6,
@@ -361,7 +361,7 @@ function StoryBlock({ settings }) {
 
             <div style={{ marginTop: 28, display: 'flex', gap: 14, flexWrap: 'wrap' }}>
               <button className="btn btn-secondary" onClick={() => navigate('/about')}>Read his story →</button>
-              <a href={(settings && settings.bookUrl) || 'https://stevensongroup.com'}
+              <a href={(settings && settings.bookUrl) || 'https://theperissosgroup.com'}
                  target="_blank" rel="noreferrer" className="btn btn-ghost">
                 Get <em>Failure Disrupted</em> <span className="arrow">→</span>
               </a>

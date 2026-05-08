@@ -25,7 +25,7 @@ set data = jsonb_build_object(
   'eventImage',      'assets/garmon-rally.jpg',
   'aboutImage',      'assets/johnnie-portrait-2026.jpg',
   'bookImage',       'assets/failure-disrupted-cover.jpg',
-  'bookUrl',         'https://stevensongroup.com',
+  'bookUrl',         'https://theperissosgroup.com',
   'logoImage',       'assets/garmon-logo.jpeg',
   'logoImageWhite',  'assets/garmon-logo-transparent.png',
   'pressEmail',      '',
