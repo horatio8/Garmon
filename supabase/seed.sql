@@ -47,11 +47,11 @@ where id = 1;
 
 -- ── Endorsements ────────────────────────────────────────────────────────────
 insert into endorsements (name, sort_order) values
-  ('Speaker Murrell Smith', 10),
   ('SC House Republican Caucus', 20),
   ('Americans for Prosperity', 30),
   ('Gov. McMaster (Healthcare Comm.)', 40)
 on conflict do nothing;
+delete from endorsements where name = 'Speaker Murrell Smith';
 
 -- ── Pillars ──────────────────────────────────────────────────────────────────
 insert into pillars (number, tag, title, body, sort_order) values
@@ -99,7 +99,7 @@ insert into events (date_label, day_label, time_label, title, location, host, ta
   ('Jun 02','Tue','6:00 pm','Folly Beach Town Hall','Folly River Park Pavilion','James Teeple',null,30),
   ('Jun 04','Thu','7:00 pm','Healthcare & Aging Panel','St. Andrew''s Episcopal, James Is.','Warren Sloane',null,40),
   ('Jun 06','Sat','8:00 am – noon','Door-knock Saturday','Riverland Terrace HQ','Volunteer event','GOTV',50),
-  ('Jun 08','Mon','6:30 pm','Election Eve Rally','Riverfront Park, North Charleston','With Speaker Smith',null,60)
+  ('Jun 08','Mon','6:30 pm','Election Eve Rally','Riverfront Park, North Charleston','Campaign team',null,60)
 on conflict do nothing;
 
 -- ── News ────────────────────────────────────────────────────────────────────
@@ -109,7 +109,7 @@ insert into news_items (tag, date_label, source, title, sort_order) values
   ('Press','Feb 03, 2026','WCSC News 5','James Island business owner enters race for SC House 115.', 30),
   ('Op-ed','Feb 20, 2026','The State','The 6% Rate Is A Promise. Honor It.', 40),
   ('Op-ed','Mar 06, 2026','FITSNews','Modernize Advanced Directives — Or Stop Pretending To Care About Aging.', 50),
-  ('Press','Apr 02, 2026','Live 5 News','Speaker Smith endorses Garmon for HD-115.', 60)
+  ('Press','Apr 02, 2026','Live 5 News','SC House Republican Caucus endorses Garmon for HD-115.', 60)
 on conflict do nothing;
 
 -- ── Volunteer options ──────────────────────────────────────────────────────

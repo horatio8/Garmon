@@ -248,7 +248,7 @@ function CountUp({ to, duration = 1400 }) {
 function EndorsementBar({ compact = false, endorsements }) {
   const orgs = (endorsements && endorsements.length)
     ? endorsements.map(e => e.name)
-    : ['Speaker Murrell Smith', 'SC House Republican Caucus', 'Americans for Prosperity', 'Gov. McMaster (Healthcare Comm.)'];
+    : ['SC House Republican Caucus', 'Americans for Prosperity', 'Gov. McMaster (Healthcare Comm.)'];
   if (!orgs.length) return null;
   return (
     <div className={'endorsement-bar' + (compact ? ' is-compact' : '')}>

@@ -83,7 +83,7 @@ function Hero({ tagline, settings }) {
               {tagline}
             </h1>
             <p className="lede" style={{ color: 'rgba(255,255,255,0.85)', maxWidth: 540, marginTop: 24, fontSize: 20 }}>
-              From Section 8 housing to thirty years building businesses across South Carolina.
+              From Section 8 housing to 25 years building businesses across South Carolina.
               Now Johnnie Garmon is asking for your vote — to bring the same accountability he
               demanded from his own companies to the people's work in Columbia.
             </p>
@@ -119,7 +119,7 @@ function Hero({ tagline, settings }) {
           <div className="grid grid-3" style={{ gap: 32 }}>
             <StatLine k="25+ years" v="Building businesses across SC" />
             <StatLine k="10,000+"   v="Patients served" />
-            <StatLine k="250+"      v="Student jobs created" />
+            <StatLine k="250+"      v="Jobs created" />
           </div>
         </div>
       </div>
@@ -139,38 +139,18 @@ function StatLine({ k, v }) {
 function HeroPhotoCard({ goldDot, settings }) {
   const heroImage = (settings && settings.heroImage) || 'assets/garmon-family.jpg';
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <img src={heroImage}
-        alt="Johnnie Garmon with his wife and daughter on a Lowcountry boardwalk at golden hour"
-        style={{
-          width: '100%',
-          aspectRatio: '4/5',
-          minHeight: 380,
-          objectFit: 'cover',
-          objectPosition: 'center 20%',
-          borderRadius: 4,
-          display: 'block',
-          boxShadow: 'var(--shadow)',
-        }} />
-      <div className="hero-quote-card" style={{
-        background: 'var(--paper)',
-        color: 'var(--ink)',
-        padding: '20px 22px',
+    <img src={heroImage}
+      alt="Johnnie Garmon and family"
+      style={{
+        width: '100%',
+        aspectRatio: '4/5',
+        minHeight: 380,
+        objectFit: 'cover',
+        objectPosition: 'center 20%',
         borderRadius: 4,
+        display: 'block',
         boxShadow: 'var(--shadow)',
-        position: 'relative',
-        marginTop: -56,
-        marginLeft: 24,
-        marginRight: -24,
-        borderLeft: '4px solid var(--crimson)',
-      }}>
-        <div className="eyebrow" style={{ color: 'var(--ink-3)' }}>{goldDot} Author, Failure Disrupted</div>
-        <p className="serif" style={{ fontSize: 18, fontStyle: 'italic', margin: '10px 0 0', color: 'var(--navy-deep)', lineHeight: 1.4 }}>
-          "This state gave me a shot. I'm running so the next kid gets the same."
-        </p>
-        <div style={{ marginTop: 12, fontSize: 12, color: 'var(--ink-3)' }}>— Johnnie Garmon</div>
-      </div>
-    </div>
+      }} />
   );
 }
 
