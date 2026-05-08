@@ -311,7 +311,7 @@ function StoryBlock({ settings }) {
       <div className="wrap">
         <div className="grid grid-2" style={{ gap: 64, alignItems: 'center' }}>
           <img src={storyImage}
-            alt="Johnnie Garmon with Kelley and their three daughters on the front steps"
+            alt="The Garmon family"
             style={{
               width: '100%',
               aspectRatio: '4/5',
