@@ -175,7 +175,7 @@ function AboutPage({ data }) {
             )}
             <div>
               <Eyebrow>The arc</Eyebrow>
-              <h2 className="h-2" style={{ marginTop: 12 }}>From Section 8 to business owner.</h2>
+              <h2 className="h-2" style={{ marginTop: 12 }}>From Section 8 to business success.</h2>
               {s.aboutArc1 && <p style={{ marginTop: 16, color: 'var(--ink-2)', fontSize: 17 }}>{s.aboutArc1}</p>}
               {s.aboutArc2 && <p style={{ color: 'var(--ink-2)', fontSize: 17 }}>{s.aboutArc2}</p>}
 
