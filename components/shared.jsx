@@ -61,7 +61,6 @@ function Nav({ route, election, settings }) {
   const items = [
     { label: 'About',     path: '/about' },
     { label: 'Issues',    path: '/issues' },
-    { label: 'Events',    path: '/events' },
     { label: 'Volunteer', path: '/volunteer' },
     { label: 'Contact',   path: '/contact' },
   ];
@@ -173,7 +172,6 @@ function Footer({ settings }) {
             <ul style={{ listStyle: 'none', padding: 0, margin: '14px 0 0', display: 'flex', flexDirection: 'column', gap: 10, fontSize: 14 }}>
               <li><a href="#/about" onClick={(e) => { e.preventDefault(); navigate('/about'); }}>About Johnnie</a></li>
               <li><a href="#/issues" onClick={(e) => { e.preventDefault(); navigate('/issues'); }}>Issues</a></li>
-              <li><a href="#/events" onClick={(e) => { e.preventDefault(); navigate('/events'); }}>Events</a></li>
               <li><a href="#/volunteer" onClick={(e) => { e.preventDefault(); navigate('/volunteer'); }}>Volunteer</a></li>
             </ul>
           </div>

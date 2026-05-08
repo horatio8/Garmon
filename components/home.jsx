@@ -42,9 +42,6 @@ function HomePage({ data, showToast }) {
       {/* STORY / FOUNDATION */}
       <StoryBlock settings={data.settings} />
 
-      {/* EVENTS TEASER */}
-      <EventTeaser data={data} />
-
       {/* CLOSING CTA */}
       <ClosingCTA />
     </main>

@@ -95,7 +95,6 @@ function App() {
   else if (route === '/donate') page = <div style={{ padding: '120px 24px', textAlign: 'center' }}>Redirecting to the secure donation page…</div>;
   else if (route === '/petition') page = <PetitionPage data={data} showToast={showToast} />;
   else if (route === '/volunteer') page = <VolunteerPage data={data} showToast={showToast} />;
-  else if (route === '/events') page = <EventsPage data={data} showToast={showToast} />;
   else if (route === '/about') page = <AboutPage data={data} />;
   else if (route === '/issues') page = <IssuesPage data={data} />;
   else if (route.startsWith('/issues/')) page = <IssueDetail data={data} slug={route.split('/')[2]} />;
