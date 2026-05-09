@@ -23,7 +23,7 @@ set data = jsonb_build_object(
   'heroImage',       'assets/garmon-family.jpg',
   'storyImage',      'assets/garmon-family-2026.jpg',
   'eventImage',      'assets/garmon-rally.jpg',
-  'aboutImage',      'assets/johnnie-portrait-2026.jpg',
+  'aboutImage',      'assets/garmon-about-2026.jpg',
   'bookImage',       'assets/failure-disrupted-2026.jpg',
   'bookUrl',         'https://theperissosgroup.com',
   'logoImage',       'assets/garmon-logo.jpeg',
