@@ -222,13 +222,15 @@ function IssuesPage({ data }) {
   const ISSUES = ((data && data.issues) || []).map(it => ({
     slug: it.slug, n: it.number, tag: it.tag, title: it.title, stance: it.stance,
   }));
+  const NUM_WORDS = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'];
+  const countWord = NUM_WORDS[ISSUES.length] || ISSUES.length;
   return (
     <main>
       <section style={{ background: 'var(--paper-2)', paddingBottom: 32 }}>
         <div className="wrap">
           <Eyebrow>Platform</Eyebrow>
           <h1 className="h-display" style={{ marginTop: 14, maxWidth: 900 }}>
-            Ten positions. <span style={{ color: 'var(--crimson)' }}>Each one a vote you can hold us to.</span>
+            {countWord} positions. <span style={{ color: 'var(--crimson)' }}>Each one a vote you can hold us to.</span>
           </h1>
         </div>
       </section>
@@ -270,8 +272,7 @@ function IssuesPage({ data }) {
 function IssueDetail({ data, slug }) {
   const issues = (data && data.issues) || [];
   const found = issues.find(it => it.slug === slug);
-  const fallback = issues.find(it => it.slug === 'permitting') || issues[0];
-  const src = found || fallback || {};
+  const src = found || issues[0] || {};
   const d = {
     n: src.number || '00',
     tag: src.tag || '',
