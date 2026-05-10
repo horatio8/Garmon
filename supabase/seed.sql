@@ -54,91 +54,42 @@ on conflict do nothing;
 delete from endorsements where name = 'Speaker Murrell Smith';
 
 -- ── Pillars ──────────────────────────────────────────────────────────────────
+-- Only four pillars now (one per remaining issue). Anything else gets dropped.
+delete from pillars where tag in ('Permitting','Property tax','Business','Place','End-of-life','Liability','Counties');
+delete from pillars where title in ('Defend Main Street.','Stop Stacking Paper.','Reduce the 6.2% Tax.');
+
 insert into pillars (number, tag, title, body, sort_order) values
-  ('01','Permitting','Stop Stacking Paper.','Demand 90-day permit deadlines, public throughput numbers, and accountability when agencies miss them.', 10),
-  ('02','Property tax','Reduce the 6.2% Tax.','Long-time residents have earned a place to stand. We won''t tax them out of the homes they built.', 20),
-  ('03','Infrastructure','Roads Before Roofs.','Infrastructure capacity must be addressed before development is approved. Concurrency, drainage, and accountability before more subdivisions.', 30),
-  ('04','Healthcare','Aging at Home.','Aging in place, price transparency, and a system that invests upstream instead of forcing families deeper into expensive institutional care.', 40),
-  ('05','Conservation','Preserve the Lowcountry.','Protect marshlands, tree canopies, and the coastal character of District 115 through thoughtful land-use planning and partnerships.', 50),
-  ('06','Education','Choice and Innovation.','Expand school choice and charter options, invest in workforce-ready pathways, and modernize how students learn for the real economy.', 60)
+  ('01','Infrastructure','Roads Before Roofs.','Infrastructure capacity must be addressed before development is approved. Concurrency, drainage, and accountability before more subdivisions.', 10),
+  ('02','Healthcare','Aging at Home.','Aging in place, price transparency, and a system that invests upstream instead of forcing families deeper into expensive institutional care.', 20),
+  ('03','Conservation','Preserve the Lowcountry.','Protect marshlands, tree canopies, and the coastal character of District 115 through thoughtful land-use planning and partnerships.', 30),
+  ('04','Education','Choice and Innovation.','Expand school choice and charter options, invest in workforce-ready pathways, and modernize how students learn for the real economy.', 40)
 on conflict do nothing;
 
--- Bring existing pillars up to date with the latest copy and remove any that are gone.
-update pillars set tag = 'Infrastructure',
-  title = 'Roads Before Roofs.',
-  body  = 'Infrastructure capacity must be addressed before development is approved. Concurrency, drainage, and accountability before more subdivisions.'
-where number = '03';
-update pillars set tag = 'Healthcare',
-  title = 'Aging at Home.',
-  body  = 'Aging in place, price transparency, and a system that invests upstream instead of forcing families deeper into expensive institutional care.'
-where number = '04';
-update pillars set tag = 'Conservation',
-  title = 'Preserve the Lowcountry.',
-  body  = 'Protect marshlands, tree canopies, and the coastal character of District 115 through thoughtful land-use planning and partnerships.'
-where number = '05';
-update pillars set tag = 'Education',
-  title = 'Choice and Innovation.',
-  body  = 'Expand school choice and charter options, invest in workforce-ready pathways, and modernize how students learn for the real economy.'
-where number = '06';
-delete from pillars where title = 'Defend Main Street.';
+-- Renumber existing rows in case they were inserted with the old numbers.
+update pillars set number = '01', sort_order = 10 where tag = 'Infrastructure';
+update pillars set number = '02', sort_order = 20 where tag = 'Healthcare';
+update pillars set number = '03', sort_order = 30 where tag = 'Conservation';
+update pillars set number = '04', sort_order = 40 where tag = 'Education';
 
 -- ── Issues ──────────────────────────────────────────────────────────────────
 -- Add the freeform `body` column for databases predating the schema update.
 alter table public.issues add column if not exists body text;
 
+-- Cut every issue except the four the campaign is shipping.
+delete from issues where slug not in ('concurrency','healthcare','conservation','education');
+
 insert into issues (slug, number, tag, title, stance, sort_order) values
-  ('permitting','01','Permitting','Stop Stacking Paper.','Demand 90-day permit deadlines and public throughput numbers.', 10),
-  ('property','02','Property tax','Reduce the 6.2% Tax.','Long-time residents have earned a place to stand.', 20),
-  ('concurrency','03','Infrastructure','Roads Before Roofs.','Infrastructure capacity must be addressed before large-scale development is approved.', 30),
-  ('healthcare','04','Healthcare','Aging at Home.','Better outcomes, lower costs, and dignity for South Carolinians as they age.', 40),
-  ('conservation','05','Environment','Preserve the Lowcountry.','Conservation and responsible growth can — and must — coexist.', 50),
-  ('education','06','Education','Choice and Innovation.','Expand school choice, embrace modern learning, and prepare students for real careers.', 60),
-  ('directives','07','End-of-life','Honor the Last Wish.','Modernize advanced-directive law.', 70),
-  ('dram','08','Liability','Reform Dram Shop.','Stop crushing small restaurants with insurance impossible to obtain.', 80),
-  ('mandates','09','Counties','No Unfunded Mandates.','Stop dumping costs on county budgets.', 90)
+  ('concurrency', '01','Infrastructure','Infrastructure and Smart Growth.','Roads before roofs.', 10),
+  ('healthcare',  '02','Healthcare',    'Health Care Innovation.',         'Aging at home, transparent prices, and a system that invests upstream.', 20),
+  ('conservation','03','Environment',   'Conservation and Environment.',   'Conservation and responsible growth can and must coexist.', 30),
+  ('education',   '04','Education',     'Education.',                      'Empower families, embrace modern learning, and prepare students for real careers.', 40)
 on conflict (slug) do nothing;
 
--- Remove deprecated issues so the live list stays in sync with the codebase.
-delete from issues where slug in ('small-biz','character');
-
--- Keep the renumbering and tag updates idempotent.
-update issues set number = '03', tag = 'Infrastructure',
-  title  = 'Roads Before Roofs.',
-  stance = 'Infrastructure capacity must be addressed before large-scale development is approved.',
-  sort_order = 30
-where slug = 'concurrency';
-update issues set number = '04', tag = 'Healthcare',
-  title  = 'Aging at Home.',
-  stance = 'Better outcomes, lower costs, and dignity for South Carolinians as they age.',
-  sort_order = 40
-where slug = 'healthcare';
-update issues set number = '06', tag = 'Education',
-  title  = 'Choice and Innovation.',
-  stance = 'Expand school choice, embrace modern learning, and prepare students for real careers.',
-  sort_order = 60
-where slug = 'education';
-update issues set number = '07', sort_order = 70 where slug = 'directives';
-update issues set number = '08', sort_order = 80 where slug = 'dram';
-update issues set number = '09', sort_order = 90 where slug = 'mandates';
-
-update issues set
-  head = 'Columbia is generating busyness, not results.',
-  deck = 'Eight months for a backyard shed. Eleven for a coffee shop. Stop Stacking Paper.',
-  story = 'Last summer a young couple in West Ashley took ten months to permit a 400-square-foot mother-in-law cottage for an aging parent. By the time the paperwork cleared, the parent was in skilled nursing. The cottage sits empty.',
-  problem = 'South Carolina has no statutory deadline by which a local permitting agency must issue a decision. There is no public reporting on throughput. Counties hide behind "the back-and-forth with the applicant" while applicants hide their applications behind tabs in Outlook. Nobody owns the timeline.',
-  bullets = jsonb_build_array(
-    '90-day statutory shot-clock on residential permits — denial requires written reasons.',
-    'Quarterly public throughput reports for every county and municipal permit office.',
-    'Automatic refund of permit fees for applications older than 180 days.',
-    'A statewide single-portal pilot program for residential ADU and renovation permits.',
-    'No more "review by committee that meets every other Wednesday." The clock runs.'
-  ),
-  reframe = 'What if the question isn''t "how do we make planners faster" but "what is the cost — to the family, the trades, the tax base — of every week that an approvable application sits in a queue"?'
-where slug = 'permitting';
-
--- The four expanded issues now use a freeform `body` paragraph block instead
--- of the structured story/problem/bullets/reframe layout. Clear those fields
--- so the new copy renders as the campaign approved it.
+-- Renumber the four remaining issues to 01–04.
+update issues set number = '01', sort_order = 10 where slug = 'concurrency';
+update issues set number = '02', sort_order = 20 where slug = 'healthcare';
+update issues set number = '03', sort_order = 30 where slug = 'conservation';
+update issues set number = '04', sort_order = 40 where slug = 'education';
 update issues set
   title  = 'Infrastructure and Smart Growth.',
   stance = 'Roads before roofs.',
