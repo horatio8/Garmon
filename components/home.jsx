@@ -3,6 +3,9 @@ const { useState, useEffect } = React;
 
 function HomePage({ data, showToast }) {
   const tagline = data.settings.tagline;
+  const NUM_WORDS = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'];
+  const pillarCount = (data.pillars || []).length;
+  const pillarCountWord = NUM_WORDS[pillarCount] || pillarCount;
 
   return (
     <main>
@@ -18,7 +21,7 @@ function HomePage({ data, showToast }) {
             <div>
               <Eyebrow>The platform</Eyebrow>
               <h2 className="h-1" style={{ marginTop: 16 }}>
-                Six things Johnnie will <em style={{ color: 'var(--crimson)', fontStyle: 'italic' }}>actually fix</em> in Columbia.
+                {pillarCountWord} {pillarCount === 1 ? 'thing' : 'things'} Johnnie will <em style={{ color: 'var(--crimson)', fontStyle: 'italic' }}>actually fix</em> in Columbia.
               </h2>
             </div>
             <p className="lede" style={{ maxWidth: 460 }}>
