@@ -100,6 +100,7 @@ create table if not exists public.issues (
   -- Deep-dive content (optional: only set if a slug has a full page)
   head text,
   deck text,
+  body text,
   story text,
   problem text,
   bullets jsonb not null default '[]'::jsonb,

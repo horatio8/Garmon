@@ -277,11 +277,13 @@ function IssueDetail({ data, slug }) {
     tag: src.tag || '',
     head: src.head || src.title || '',
     deck: src.deck || src.stance || '',
+    body: src.body || '',
     story: src.story || '',
     problem: src.problem || '',
     bullets: Array.isArray(src.bullets) ? src.bullets : [],
     reframe: src.reframe || '',
   };
+  const bodyParas = d.body ? d.body.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean) : [];
   return (
     <main>
       <section style={{ background: 'var(--navy-deep)', color: 'var(--paper)', paddingBottom: 80 }}>
@@ -301,42 +303,52 @@ function IssueDetail({ data, slug }) {
       <section>
         <div className="wrap split" style={{ '--split-cols': '2fr 1fr', '--split-gap': '56px' }}>
           <article>
-            <Eyebrow>The story</Eyebrow>
-            <p className="serif" style={{ fontSize: 24, fontWeight: 500, lineHeight: 1.45, color: 'var(--navy-deep)', marginTop: 12, fontStyle: 'italic' }}>
-              {d.story}
-            </p>
+            {bodyParas.length > 0 ? (
+              bodyParas.map((para, i) => (
+                <p key={i} style={{ fontSize: 17, lineHeight: 1.65, color: 'var(--ink)', marginTop: i === 0 ? 0 : 20 }}>
+                  {para}
+                </p>
+              ))
+            ) : (
+              <>
+                <Eyebrow>The story</Eyebrow>
+                <p className="serif" style={{ fontSize: 24, fontWeight: 500, lineHeight: 1.45, color: 'var(--navy-deep)', marginTop: 12, fontStyle: 'italic' }}>
+                  {d.story}
+                </p>
 
-            <h2 className="h-2" style={{ marginTop: 56 }}>The problem.</h2>
-            <p className="lede" style={{ marginTop: 14, color: 'var(--ink-2)' }}>{d.problem}</p>
+                <h2 className="h-2" style={{ marginTop: 56 }}>The problem.</h2>
+                <p className="lede" style={{ marginTop: 14, color: 'var(--ink-2)' }}>{d.problem}</p>
 
-            <h2 className="h-2" style={{ marginTop: 56 }}>What I'll push for in Columbia.</h2>
-            <ol style={{ paddingLeft: 0, listStyle: 'none', counterReset: 'pol', marginTop: 18 }}>
-              {d.bullets.map((b, i) => (
-                <li key={i} style={{
-                  display: 'grid', gridTemplateColumns: '40px 1fr', gap: 16,
-                  padding: '18px 0',
-                  borderTop: i === 0 ? '2px solid var(--navy)' : '1px solid var(--hairline-2)',
+                <h2 className="h-2" style={{ marginTop: 56 }}>What I'll push for in Columbia.</h2>
+                <ol style={{ paddingLeft: 0, listStyle: 'none', counterReset: 'pol', marginTop: 18 }}>
+                  {d.bullets.map((b, i) => (
+                    <li key={i} style={{
+                      display: 'grid', gridTemplateColumns: '40px 1fr', gap: 16,
+                      padding: '18px 0',
+                      borderTop: i === 0 ? '2px solid var(--navy)' : '1px solid var(--hairline-2)',
+                    }}>
+                      <span className="serif" style={{ fontSize: 22, fontWeight: 600, color: 'var(--crimson)', letterSpacing: '-0.02em' }}>
+                        {(i + 1).toString().padStart(2, '0')}
+                      </span>
+                      <p style={{ margin: 0, fontSize: 17, color: 'var(--ink)' }}>{b}</p>
+                    </li>
+                  ))}
+                </ol>
+
+                <div style={{
+                  marginTop: 56,
+                  padding: '36px 40px',
+                  background: 'var(--paper-2)',
+                  borderRadius: 6,
+                  borderTop: '4px solid var(--gold)',
                 }}>
-                  <span className="serif" style={{ fontSize: 22, fontWeight: 600, color: 'var(--crimson)', letterSpacing: '-0.02em' }}>
-                    {(i + 1).toString().padStart(2, '0')}
-                  </span>
-                  <p style={{ margin: 0, fontSize: 17, color: 'var(--ink)' }}>{b}</p>
-                </li>
-              ))}
-            </ol>
-
-            <div style={{
-              marginTop: 56,
-              padding: '36px 40px',
-              background: 'var(--paper-2)',
-              borderRadius: 6,
-              borderTop: '4px solid var(--gold)',
-            }}>
-              <Eyebrow>The reframe</Eyebrow>
-              <p className="serif" style={{ fontSize: 26, fontWeight: 500, lineHeight: 1.4, color: 'var(--navy-deep)', marginTop: 14 }}>
-                {d.reframe}
-              </p>
-            </div>
+                  <Eyebrow>The reframe</Eyebrow>
+                  <p className="serif" style={{ fontSize: 26, fontWeight: 500, lineHeight: 1.4, color: 'var(--navy-deep)', marginTop: 14 }}>
+                    {d.reframe}
+                  </p>
+                </div>
+              </>
+            )}
           </article>
 
           <aside className="sticky-aside" data-sticky style={{ position: 'sticky', top: 120, alignSelf: 'start' }}>
