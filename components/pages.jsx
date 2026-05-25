@@ -503,4 +503,255 @@ function ContactPage({ data, showToast }) {
   );
 }
 
-Object.assign(window, { VolunteerPage, EventsPage, AboutPage, IssuesPage, IssueDetail, NewsPage, ContactPage });
+/* ── EARLY VOTING ────────────────────────────────────────────── */
+const EARLY_VOTING_CENTERS = [
+  { name: 'County Voter Registration Office', address: '4340 Corporate Road, North Charleston, SC 29405', lat: 32.8755, lng: -80.0297 },
+  { name: 'Wando Library',                     address: '1400 Carolina Park Blvd, Mt Pleasant, SC 29466', lat: 32.8590, lng: -79.7790 },
+  { name: 'James Island Baxter-Patrick Library', address: '1858 S. Grimball Road, Charleston, SC 29412', lat: 32.7195, lng: -79.9430 },
+  { name: 'Morris Brown AME Church',           address: '13 Morris St., Charleston, SC 29403',            lat: 32.7905, lng: -79.9400 },
+  { name: 'Greater Macedonia AME Church',      address: '725 Savage Rd., Charleston, SC 29414',           lat: 32.8030, lng: -80.0530 },
+];
+
+function milesBetween(lat1, lng1, lat2, lng2) {
+  const toRad = d => (d * Math.PI) / 180;
+  const R = 3958.8; // miles
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+const mapsSearchLink = (addr) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`;
+const mapsEmbedSrc   = (q)    => `https://maps.google.com/maps?q=${encodeURIComponent(q)}&z=11&output=embed`;
+
+function EarlyVotingSignup({ showToast }) {
+  const [form, setForm] = useState({ first_name: '', last_name: '', email: '', phone: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState(false);
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      await window.submitPledge(e.target);
+    } catch (err) {
+      setSubmitting(false);
+      (showToast || (() => {}))("Couldn't reach the campaign server. Please try again.");
+      return;
+    }
+    if (window.mirrorPledge) await window.mirrorPledge(form, 'early_voting');
+    setSubmitting(false);
+    setDone(true);
+    (showToast || (() => {}))('Thanks for signing up. Welcome to the team.');
+  };
+
+  return (
+    <div className="card" style={{ padding: 28, borderTop: '4px solid var(--crimson)' }}>
+      {!done ? (
+        <form onSubmit={submit}>
+          <Eyebrow>Join the campaign</Eyebrow>
+          <h2 className="h-3" style={{ marginTop: 10 }}>Sign up for Together with Garmon.</h2>
+          <p className="small" style={{ margin: '6px 0 18px' }}>
+            Get early-voting reminders and campaign updates. Takes a few seconds — we'll never sell your info.
+          </p>
+          <div className="col" style={{ gap: 14 }}>
+            <div className="grid grid-2" style={{ gap: 14 }}>
+              <div className="field">
+                <label htmlFor="ev-first">First name *</label>
+                <input id="ev-first" name="first_name" type="text" required placeholder="Mary"
+                  value={form.first_name} onChange={e => setForm({ ...form, first_name: e.target.value })} />
+              </div>
+              <div className="field">
+                <label htmlFor="ev-last">Last name *</label>
+                <input id="ev-last" name="last_name" type="text" required placeholder="Pinckney"
+                  value={form.last_name} onChange={e => setForm({ ...form, last_name: e.target.value })} />
+              </div>
+            </div>
+            <div className="grid grid-2" style={{ gap: 14 }}>
+              <div className="field">
+                <label htmlFor="ev-phone">Cell / Mobile phone *</label>
+                <input id="ev-phone" name="phone" type="tel" required placeholder="(843) 989-0843"
+                  value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
+              </div>
+              <div className="field">
+                <label htmlFor="ev-email">Email</label>
+                <input id="ev-email" name="email" type="email" placeholder="you@email.com"
+                  value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+              </div>
+            </div>
+            <button className="btn btn-primary btn-full btn-lg" type="submit" disabled={submitting}>
+              {submitting ? 'Signing you up…' : 'Sign me up →'}
+            </button>
+            <p className="fineprint" style={{ margin: 0 }}>
+              By signing up you agree to receive campaign updates. Paid for by the Committee to Elect Johnnie Garmon.
+            </p>
+          </div>
+        </form>
+      ) : (
+        <div className="fade-up" style={{ textAlign: 'center', padding: '12px 0' }}>
+          <div style={{
+            width: 56, height: 56, margin: '0 auto',
+            background: 'var(--navy)', color: 'var(--paper)',
+            borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 26, fontWeight: 600,
+          }}>✓</div>
+          <h3 className="h-3" style={{ marginTop: 14 }}>You're on the list.</h3>
+          <p style={{ marginTop: 8, color: 'var(--ink-2)' }}>We'll send you early-voting reminders before {' '}
+            <strong>June 5</strong>. Now make your plan to vote below.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function EarlyVotingPage({ data, showToast }) {
+  const [zip, setZip] = useState('');
+  const [results, setResults] = useState(null);
+  const [zipErr, setZipErr] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [mapQuery, setMapQuery] = useState(EARLY_VOTING_CENTERS[0].address);
+
+  const findNearest = async (e) => {
+    e.preventDefault();
+    const z = zip.trim();
+    if (!/^\d{5}$/.test(z)) { setZipErr('Enter a 5-digit ZIP code.'); setResults(null); return; }
+    setLoading(true); setZipErr('');
+    try {
+      const res = await fetch(`https://api.zippopotam.us/us/${z}`);
+      if (!res.ok) throw new Error('not found');
+      const j = await res.json();
+      const place = j.places && j.places[0];
+      const lat = parseFloat(place.latitude), lng = parseFloat(place.longitude);
+      const sorted = EARLY_VOTING_CENTERS
+        .map(c => ({ ...c, miles: milesBetween(lat, lng, c.lat, c.lng) }))
+        .sort((a, b) => a.miles - b.miles);
+      setResults(sorted);
+      setMapQuery(sorted[0].address);
+    } catch (err) {
+      setZipErr("We couldn't find that ZIP code. Double-check it and try again.");
+      setResults(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const centerList = results || EARLY_VOTING_CENTERS.map(c => ({ ...c, miles: null }));
+
+  return (
+    <main>
+      {/* SIGNUP — top of page */}
+      <section style={{ background: 'var(--paper-2)', paddingBottom: 32 }}>
+        <div className="wrap">
+          <div className="grid grid-2" style={{ gap: 56, alignItems: 'start' }}>
+            <div>
+              <Eyebrow>Early voting · Republican Primary</Eyebrow>
+              <h1 className="h-display" style={{ marginTop: 16 }}>
+                Vote early. <span style={{ color: 'var(--crimson)' }}>Make it count.</span>
+              </h1>
+              <p className="lede" style={{ marginTop: 18, maxWidth: 520 }}>
+                Early voting for the Statewide Primary runs <strong>Tuesday, May 26</strong> through{' '}
+                <strong>Friday, June 5</strong>. Any registered Charleston County voter can use any
+                of the centers below — no appointment, no excuse needed. Sign up and we'll remind you.
+              </p>
+            </div>
+            <EarlyVotingSignup showToast={showToast} />
+          </div>
+        </div>
+      </section>
+
+      {/* INSTRUCTIONS */}
+      <section style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="card" style={{ padding: 32, borderTop: '4px solid var(--navy)' }}>
+            <Eyebrow>Early voting period</Eyebrow>
+            <h2 className="h-2" style={{ marginTop: 12 }}>When you can vote.</h2>
+            <p style={{ marginTop: 14, color: 'var(--ink-2)', fontSize: 17, maxWidth: 720 }}>
+              The early voting period for the Statewide Primary starts on <strong>Tuesday, May 26</strong> and
+              ends <strong>Friday, June 5</strong> (closed on Saturday and Sunday and state holidays).
+            </p>
+            <p style={{ marginTop: 10, color: 'var(--ink-2)', fontSize: 17 }}>
+              Early voting centers are open <strong>8:30 a.m. – 5:00 p.m.</strong>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ZIP FINDER + LOCATIONS */}
+      <section style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <Eyebrow>Find your closest center</Eyebrow>
+          <h2 className="h-2" style={{ marginTop: 12 }}>Enter your ZIP code.</h2>
+          <p className="small" style={{ marginTop: 6, maxWidth: 640 }}>
+            During early voting you may cast your ballot at <em>any</em> of these Charleston County
+            centers. Enter your ZIP and we'll sort them by distance.
+          </p>
+
+          <form onSubmit={findNearest} style={{ marginTop: 18, display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+            <div className="field" style={{ maxWidth: 220 }}>
+              <label htmlFor="ev-zip">Your ZIP code</label>
+              <input id="ev-zip" type="text" inputMode="numeric" pattern="[0-9]{5}" maxLength={5}
+                placeholder="29412" value={zip}
+                onChange={e => setZip(e.target.value.replace(/[^0-9]/g, ''))} />
+            </div>
+            <button className="btn btn-primary btn-lg" type="submit" disabled={loading}>
+              {loading ? 'Finding…' : 'Find closest center →'}
+            </button>
+          </form>
+          {zipErr && <p className="small" style={{ marginTop: 10, color: 'var(--crimson)' }}>{zipErr}</p>}
+
+          <div className="grid grid-2" style={{ gap: 32, marginTop: 28, alignItems: 'start' }}>
+            {/* LIST */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {centerList.map((c, i) => {
+                const isNearest = results && i === 0;
+                return (
+                  <article key={c.name} style={{
+                    background: '#fff',
+                    border: '1px solid var(--hairline)',
+                    borderLeft: isNearest ? '4px solid var(--crimson)' : '4px solid var(--navy)',
+                    borderRadius: 4,
+                    padding: '16px 18px',
+                  }}>
+                    <div className="between" style={{ alignItems: 'baseline', gap: 12 }}>
+                      <h3 className="h-4" style={{ fontFamily: 'var(--serif)', fontSize: 19 }}>{c.name}</h3>
+                      {c.miles != null && (
+                        <span className={'pill ' + (isNearest ? 'pill-crimson' : '')} style={{ whiteSpace: 'nowrap' }}>
+                          {c.miles.toFixed(1)} mi{isNearest ? ' · closest' : ''}
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: 14, color: 'var(--ink-2)', marginTop: 4 }}>{c.address}</div>
+                    <a href={mapsSearchLink(c.address)} target="_blank" rel="noreferrer"
+                      onClick={() => setMapQuery(c.address)}
+                      className="small" style={{ color: 'var(--crimson)', fontWeight: 600, display: 'inline-block', marginTop: 8 }}>
+                      Directions →
+                    </a>
+                  </article>
+                );
+              })}
+            </div>
+
+            {/* MAP */}
+            <div className="sticky-aside" data-sticky style={{ position: 'sticky', top: 120 }}>
+              <div style={{ border: '1px solid var(--hairline)', borderRadius: 4, overflow: 'hidden', background: '#fff' }}>
+                <iframe
+                  title="Early voting centers map"
+                  src={mapsEmbedSrc(mapQuery)}
+                  style={{ width: '100%', height: 420, border: 0, display: 'block' }}
+                  loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+              </div>
+              <p className="fineprint" style={{ marginTop: 10 }}>
+                Always confirm hours and locations at scvotes.gov before you go. Distances are
+                approximate, straight-line estimates.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+Object.assign(window, { VolunteerPage, EventsPage, AboutPage, IssuesPage, IssueDetail, NewsPage, ContactPage, EarlyVotingPage });

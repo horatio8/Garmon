@@ -29,8 +29,12 @@
 const { useState, useEffect, useCallback } = React;
 
 function getRoute() {
-  const h = window.location.hash.replace(/^#/, '') || '/';
-  return h.startsWith('/') ? h : '/' + h;
+  const h = window.location.hash.replace(/^#/, '');
+  if (h) return h.startsWith('/') ? h : '/' + h;
+  // No hash: support clean paths like /early (served via a vercel.json rewrite).
+  const path = (window.location.pathname || '/').replace(/\/+$/, '');
+  const KNOWN = ['/early', '/about', '/issues', '/volunteer', '/petition', '/contact', '/news'];
+  return KNOWN.includes(path) ? path : '/';
 }
 window.navigate = (path) => {
   if (path === '/donate') { window.goDonate(); return; }
@@ -99,6 +103,7 @@ function App() {
   else if (route === '/issues') page = <IssuesPage data={data} />;
   else if (route.startsWith('/issues/')) page = <IssueDetail data={data} slug={route.split('/')[2]} />;
   else if (route === '/news') page = <NewsPage data={data} />;
+  else if (route === '/early') page = <EarlyVotingPage data={data} showToast={showToast} />;
   else if (route === '/contact') page = <ContactPage data={data} showToast={showToast} />;
   else page = <HomePage data={data} showToast={showToast} />;
 
