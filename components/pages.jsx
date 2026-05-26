@@ -505,12 +505,33 @@ function ContactPage({ data, showToast }) {
 
 /* ── EARLY VOTING ────────────────────────────────────────────── */
 const EARLY_VOTING_CENTERS = [
-  { name: 'County Voter Registration Office', address: '4340 Corporate Road, North Charleston, SC 29405', lat: 32.8755, lng: -80.0297 },
-  { name: 'Wando Library',                     address: '1400 Carolina Park Blvd, Mt Pleasant, SC 29466', lat: 32.8590, lng: -79.7790 },
-  { name: 'James Island Baxter-Patrick Library', address: '1858 S. Grimball Road, Charleston, SC 29412', lat: 32.7195, lng: -79.9430 },
-  { name: 'Morris Brown AME Church',           address: '13 Morris St., Charleston, SC 29403',            lat: 32.7905, lng: -79.9400 },
-  { name: 'Greater Macedonia AME Church',      address: '725 Savage Rd., Charleston, SC 29414',           lat: 32.8030, lng: -80.0530 },
+  { name: 'County Voter Registration Office', address: '4340 Corporate Road, North Charleston, SC 29405', lat: 32.8466, lng: -79.9986 },
+  { name: 'Wando Library',                     address: '1400 Carolina Park Blvd, Mt Pleasant, SC 29466', lat: 32.8589, lng: -79.7807 },
+  { name: 'James Island Baxter-Patrick Library', address: '1858 S. Grimball Road, Charleston, SC 29412', lat: 32.7079, lng: -79.9565 },
+  { name: 'Morris Brown AME Church',           address: '13 Morris St., Charleston, SC 29403',            lat: 32.7918, lng: -79.9389 },
+  { name: 'Greater Macedonia AME Church',      address: '725 Savage Rd., Charleston, SC 29414',           lat: 32.8124, lng: -80.0430 },
 ];
+
+// Accurate built-in centroids for Charleston County / District 115 ZIPs. The
+// free zippopotam.us geocoder returns imprecise centroids for some of these
+// (e.g. 29455 Johns Island), so for local ZIPs we trust this table and only
+// fall back to the network geocoder for out-of-area ZIPs.
+const ZIP_COORDS = {
+  '29401': [32.7795, -79.9300], // Charleston (downtown)
+  '29403': [32.8000, -79.9430], // Charleston (upper peninsula)
+  '29405': [32.8660, -79.9760], // North Charleston
+  '29406': [32.9300, -80.0260], // North Charleston
+  '29407': [32.7944, -80.0184], // West Ashley
+  '29412': [32.7180, -79.9560], // James Island
+  '29414': [32.8090, -80.0560], // West Ashley / Charleston
+  '29418': [32.8770, -80.0680], // North Charleston / Ladson
+  '29420': [32.9120, -80.0640], // North Charleston
+  '29439': [32.6552, -79.9404], // Folly Beach
+  '29455': [32.6550, -80.0560], // Johns Island (incl. Kiawah, Seabrook)
+  '29464': [32.8050, -79.8580], // Mt Pleasant (south)
+  '29466': [32.8580, -79.7900], // Mt Pleasant (north)
+  '29492': [32.8530, -79.8980], // Daniel Island / Cainhoy
+};
 
 function milesBetween(lat1, lng1, lat2, lng2) {
   const toRad = d => (d * Math.PI) / 180;
@@ -520,6 +541,12 @@ function milesBetween(lat1, lng1, lat2, lng2) {
   const a = Math.sin(dLat / 2) ** 2 +
     Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function rankCenters(lat, lng) {
+  return EARLY_VOTING_CENTERS
+    .map(c => ({ ...c, miles: milesBetween(lat, lng, c.lat, c.lng) }))
+    .sort((a, b) => a.miles - b.miles);
 }
 
 const mapsSearchLink = (addr) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`;
@@ -617,20 +644,31 @@ function EarlyVotingPage({ data, showToast }) {
     e.preventDefault();
     const z = zip.trim();
     if (!/^\d{5}$/.test(z)) { setZipErr('Enter a 5-digit ZIP code.'); setResults(null); return; }
-    setLoading(true); setZipErr('');
+    setZipErr('');
+
+    // Trust the built-in table for Charleston-area ZIPs (accurate + offline).
+    const local = ZIP_COORDS[z];
+    if (local) {
+      const sorted = rankCenters(local[0], local[1]);
+      setResults(sorted);
+      setMapQuery(sorted[0].address);
+      return;
+    }
+
+    // Fall back to a network geocoder for ZIPs outside the area.
+    setLoading(true);
     try {
       const res = await fetch(`https://api.zippopotam.us/us/${z}`);
       if (!res.ok) throw new Error('not found');
       const j = await res.json();
       const place = j.places && j.places[0];
-      const lat = parseFloat(place.latitude), lng = parseFloat(place.longitude);
-      const sorted = EARLY_VOTING_CENTERS
-        .map(c => ({ ...c, miles: milesBetween(lat, lng, c.lat, c.lng) }))
-        .sort((a, b) => a.miles - b.miles);
+      const lat = parseFloat(place && place.latitude), lng = parseFloat(place && place.longitude);
+      if (!isFinite(lat) || !isFinite(lng)) throw new Error('bad coords');
+      const sorted = rankCenters(lat, lng);
       setResults(sorted);
       setMapQuery(sorted[0].address);
     } catch (err) {
-      setZipErr("We couldn't find that ZIP code. Double-check it and try again.");
+      setZipErr("We couldn't locate that ZIP code. If you're outside Charleston County, any center above still works during early voting.");
       setResults(null);
     } finally {
       setLoading(false);
