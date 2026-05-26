@@ -1,0 +1,131 @@
+<!doctype html>
+<!-- COPY of "Together with Garmon.html" served at /early via cleanUrls. Keep the
+     two shells in sync; all real logic lives in the shared components/*.jsx files. -->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Together with Garmon — SC House District 115</title>
+<meta name="description" content="Johnnie Garmon for South Carolina House District 115. A better day tomorrow." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="app"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="lib/data.js"></script>
+
+<script type="text/babel" src="components/shared.jsx"></script>
+<script type="text/babel" src="components/home.jsx"></script>
+<script type="text/babel" src="components/petition.jsx"></script>
+<script type="text/babel" src="components/pages.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+function getRoute() {
+  const h = window.location.hash.replace(/^#/, '');
+  if (h) return h.startsWith('/') ? h : '/' + h;
+  // No hash: support clean paths like /early (served via a vercel.json rewrite).
+  const path = (window.location.pathname || '/').replace(/\/+$/, '');
+  const KNOWN = ['/early', '/about', '/issues', '/volunteer', '/petition', '/contact', '/news'];
+  return KNOWN.includes(path) ? path : '/';
+}
+window.navigate = (path) => {
+  if (path === '/donate') { window.goDonate(); return; }
+  window.location.hash = path;
+  window.scrollTo({ top: 0, behavior: 'instant' });
+};
+
+function getElectionInfo(settings) {
+  const now = new Date();
+  const elections = [
+    { label: 'Primary', dateStr: settings.primaryLong, shortDate: settings.primaryShort, date: new Date(settings.primaryDate + 'T00:00:00') },
+    { label: 'General', dateStr: settings.generalLong, shortDate: settings.generalShort, date: new Date(settings.generalDate + 'T00:00:00') },
+  ];
+  const upcoming = elections.find(e => e.date >= now) || elections[elections.length - 1];
+  return { label: upcoming.label, dateStr: upcoming.dateStr, shortDate: upcoming.shortDate };
+}
+
+function App() {
+  const [data, setData] = useState(null);
+  const [route, setRoute] = useState(getRoute());
+  const [toast, setToast] = useState('');
+
+  useEffect(() => {
+    window.loadSiteData().then(d => {
+      setData(d);
+      window.SITE_DATA = d;
+      window.DONATE_URL = d.settings.donateUrl;
+      window.PLEDGE_RECEIVER_URL = d.settings.pledgeReceiverUrl;
+      window.goDonate = () => { window.location.href = d.settings.donateUrl; };
+    });
+  }, []);
+
+  useEffect(() => {
+    const onHash = () => setRoute(getRoute());
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+
+  const showToast = useCallback((msg) => setToast(msg), []);
+  const [election, setElection] = useState(null);
+  useEffect(() => {
+    if (!data) return;
+    setElection(getElectionInfo(data.settings));
+    const id = setInterval(() => setElection(getElectionInfo(data.settings)), 60_000);
+    return () => clearInterval(id);
+  }, [data]);
+
+  useEffect(() => {
+    if (data && route === '/donate') window.location.replace(data.settings.donateUrl);
+  }, [route, data]);
+
+  if (!data) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-3)', fontFamily: 'var(--sans)' }}>
+        Loading…
+      </div>
+    );
+  }
+
+  let page;
+  if (route === '/') page = <HomePage data={data} showToast={showToast} />;
+  else if (route === '/donate') page = <div style={{ padding: '120px 24px', textAlign: 'center' }}>Redirecting to the secure donation page…</div>;
+  else if (route === '/petition') page = <PetitionPage data={data} showToast={showToast} />;
+  else if (route === '/volunteer') page = <VolunteerPage data={data} showToast={showToast} />;
+  else if (route === '/about') page = <AboutPage data={data} />;
+  else if (route === '/issues') page = <IssuesPage data={data} />;
+  else if (route.startsWith('/issues/')) page = <IssueDetail data={data} slug={route.split('/')[2]} />;
+  else if (route === '/news') page = <NewsPage data={data} />;
+  else if (route === '/early') page = <EarlyVotingPage data={data} showToast={showToast} />;
+  else if (route === '/contact') page = <ContactPage data={data} showToast={showToast} />;
+  else page = <HomePage data={data} showToast={showToast} />;
+
+  return (
+    <div data-screen-label={`Route ${route}`}>
+      <Nav route={route} election={election} settings={data.settings} />
+      {page}
+      <Footer settings={data.settings} />
+
+      <a className="sticky-donate" href={data.settings.donateUrl}>
+        <span style={{ width: 8, height: 8, background: 'var(--crimson)', borderRadius: '50%' }} className="pulse-dot" />
+        Donate
+      </a>
+
+      <Toast msg={toast} onClose={() => setToast('')} />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('app')).render(<App />);
+</script>
+</body>
+</html>
