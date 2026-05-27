@@ -420,24 +420,31 @@ function NewsPage({ data }) {
 
 function ContactPage({ data, showToast }) {
   const s = (data && data.settings) || {};
-  const [form, setForm] = useState({ name: '', email: '', topic: 'General question', message: '' });
+  const [form, setForm] = useState({ full_name: '', email: '', subject: 'general', message: '' });
   const [submitting, setSubmitting] = useState(false);
 
   const send = async (e) => {
     e.preventDefault();
     if (submitting) return;
     setSubmitting(true);
+    const url = s.contactReceiverUrl
+      || 'https://jgn.campaignnucleus.com/forms/receiver/6c44fcbf-2ce8-4666-b839-bc5cc874c134';
     try {
-      if (window.submitContact) {
-        await window.submitContact({ name: form.name, email: form.email, topic: form.topic, message: form.message });
-      }
-      setSubmitting(false);
-      (showToast || (() => {}))('Thanks. The campaign team will reply soon.');
-      navigate('/');
+      // Campaign Nucleus is canonical. Cross-origin POST is fire-and-forget (no CORS).
+      await fetch(url, { method: 'POST', mode: 'no-cors', body: new FormData(e.target) });
     } catch (err) {
       setSubmitting(false);
-      (showToast || (() => {}))(err.message || 'Could not send. Please email media@togetherwithgarmon.com.');
+      (showToast || (() => {}))("Couldn't reach the campaign server. Please try again.");
+      return;
     }
+    // Best-effort mirror to Supabase if it's configured; never blocks the user.
+    if (window.HAS_SUPABASE && window.submitContact) {
+      try { await window.submitContact({ name: form.full_name, email: form.email, topic: form.subject, message: form.message }); }
+      catch (e2) { /* Nucleus already has it */ }
+    }
+    setSubmitting(false);
+    (showToast || (() => {}))('Thanks. The campaign team will reply soon.');
+    navigate('/');
   };
 
   return (
@@ -480,19 +487,22 @@ function ContactPage({ data, showToast }) {
           <div className="card">
             <Eyebrow>Send a note</Eyebrow>
             <form style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }} onSubmit={send}>
-              <div className="field"><label>Name</label>
-                <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+              <div className="field"><label htmlFor="ct-name">Name</label>
+                <input id="ct-name" name="full_name" type="text" required value={form.full_name} onChange={e => setForm({ ...form, full_name: e.target.value })} />
               </div>
-              <div className="field"><label>Email</label>
-                <input type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+              <div className="field"><label htmlFor="ct-email">Email</label>
+                <input id="ct-email" name="email" type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
               </div>
-              <div className="field"><label>What's this about?</label>
-                <select value={form.topic} onChange={e => setForm({ ...form, topic: e.target.value })}>
-                  <option>General question</option><option>Press inquiry</option><option>Volunteer</option><option>Event hosting</option>
+              <div className="field"><label htmlFor="ct-subject">What's this about?</label>
+                <select id="ct-subject" name="subject" value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })}>
+                  <option value="general">General question</option>
+                  <option value="press">Press inquiry</option>
+                  <option value="volunteer">Volunteer</option>
+                  <option value="event">Event hosting</option>
                 </select>
               </div>
-              <div className="field"><label>Message</label>
-                <textarea rows="5" required value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} />
+              <div className="field"><label htmlFor="ct-message">Message</label>
+                <textarea id="ct-message" name="message" rows="5" required value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} />
               </div>
               <button className="btn btn-primary" type="submit" disabled={submitting}>{submitting ? 'Sending…' : 'Send'}</button>
             </form>
