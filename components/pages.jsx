@@ -1,14 +1,50 @@
 /* global React */
 const { useState } = React;
 
+// Maps the site's volunteer option keys to the Campaign Nucleus receiver's
+// checkbox values (handle: volunteer).
+const VOLUNTEER_VALUE_MAP = {
+  door:  'Doorknocking',
+  phone: 'phonebanking',
+  yard:  'yardsign',
+  host:  'HostEvent',
+  data:  'DataEntry',
+  drive: 'DriveSeniors',
+  other: 'Other',
+};
+
 /* ── VOLUNTEER ───────────────────────────────────────────────── */
 function VolunteerPage({ data, showToast }) {
+  const s = (data && data.settings) || {};
   const opts = ((data && data.volunteer) || []).map(o => ({ id: o.key, label: o.label, body: o.body }));
   const [picked, setPicked] = useState({});
   const [form, setForm] = useState({ name: '', email: '', phone: '', zip: '', notes: '' });
+  const [submitting, setSubmitting] = useState(false);
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
+    const url = s.volunteerReceiverUrl
+      || 'https://jgn.campaignnucleus.com/forms/receiver/d70693a2-6422-4ff4-86f5-ca1cb0e8b6bf';
+    const fd = new FormData();
+    fd.append('full_name', form.name);
+    fd.append('email', form.email);
+    fd.append('phone', form.phone);
+    fd.append('zip', form.zip);
+    fd.append('anything_else', form.notes);
+    Object.keys(picked).filter(k => picked[k]).forEach(k => {
+      fd.append('volunteer[]', VOLUNTEER_VALUE_MAP[k] || k);
+    });
+    try {
+      // Campaign Nucleus is canonical. Cross-origin POST is fire-and-forget (no CORS).
+      await fetch(url, { method: 'POST', mode: 'no-cors', body: fd });
+    } catch (err) {
+      setSubmitting(false);
+      showToast("Couldn't reach the campaign server. Please try again.");
+      return;
+    }
+    setSubmitting(false);
     const n = Object.values(picked).filter(Boolean).length;
     showToast(`Welcome aboard. We'll be in touch about your ${n} interest area${n === 1 ? '' : 's'}.`);
     navigate('/');
@@ -61,7 +97,7 @@ function VolunteerPage({ data, showToast }) {
                 </div>
               </div>
 
-              <button className="btn btn-primary btn-full btn-lg" type="submit" style={{ marginTop: 24 }}>Sign me up →</button>
+              <button className="btn btn-primary btn-full btn-lg" type="submit" style={{ marginTop: 24 }} disabled={submitting}>{submitting ? 'Signing you up…' : 'Sign me up →'}</button>
             </div>
           </form>
         </div>
