@@ -8,6 +8,7 @@ set data = jsonb_build_object(
   'donateUrl',       'https://secure.anedot.com/johnnie-garmon-for-sc115/donate?exitIntent=true',
   'pledgeReceiverUrl','https://jgn.campaignnucleus.com/forms/receiver/26a0f120-140b-4d01-95be-cfd9951d689e',
   'contactReceiverUrl','https://jgn.campaignnucleus.com/forms/receiver/6c44fcbf-2ce8-4666-b839-bc5cc874c134',
+  'volunteerReceiverUrl','https://jgn.campaignnucleus.com/forms/receiver/d70693a2-6422-4ff4-86f5-ca1cb0e8b6bf',
   'primaryDate',     '2026-06-09',
   'primaryShort',    'June 9',
   'primaryLong',     'June 9, 2026',
