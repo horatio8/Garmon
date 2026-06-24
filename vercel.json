@@ -5,9 +5,7 @@
     { "source": "/vote", "destination": "/early", "permanent": false }
   ],
   "rewrites": [
-    { "source": "/", "destination": "/Together%20with%20Garmon.html" },
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/admin/", "destination": "/admin.html" }
+    { "source": "/", "destination": "/Together%20with%20Garmon.html" }
   ],
   "headers": [
     {

@@ -220,7 +220,6 @@ function CounterBlock({ data, showToast }) {
       showToast("Couldn't reach the campaign server. Please try again.");
       return;
     }
-    if (window.mirrorPledge) await window.mirrorPledge(form, 'home_counter');
     setSubmitting(false);
     showToast('Pledge recorded. Welcome to the team.');
     setForm({ first_name: '', last_name: '', email: '', phone: '' });

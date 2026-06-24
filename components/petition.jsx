@@ -64,7 +64,6 @@ function PetitionPage({ data, showToast }) {
       showToast("Couldn't reach the campaign server. Please try again.");
       return;
     }
-    if (window.mirrorPledge) await window.mirrorPledge(form, 'site');
     setRecent([(form.first_name || '').trim() || 'Anonymous', ...recent]);
     setCount(c => c + 1);
     setPledged(true);
