@@ -473,11 +473,6 @@ function ContactPage({ data, showToast }) {
       (showToast || (() => {}))("Couldn't reach the campaign server. Please try again.");
       return;
     }
-    // Best-effort mirror to Supabase if it's configured; never blocks the user.
-    if (window.HAS_SUPABASE && window.submitContact) {
-      try { await window.submitContact({ name: form.full_name, email: form.email, topic: form.subject, message: form.message }); }
-      catch (e2) { /* Nucleus already has it */ }
-    }
     setSubmitting(false);
     (showToast || (() => {}))('Thanks. The campaign team will reply soon.');
     navigate('/');
@@ -614,7 +609,6 @@ function EarlyVotingSignup({ showToast }) {
       (showToast || (() => {}))("Couldn't reach the campaign server. Please try again.");
       return;
     }
-    if (window.mirrorPledge) await window.mirrorPledge(form, 'early_voting');
     setSubmitting(false);
     setDone(true);
     (showToast || (() => {}))('Thanks for signing up. Welcome to the team.');
