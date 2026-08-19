@@ -220,6 +220,7 @@ function CounterBlock({ data, showToast }) {
       showToast("Couldn't reach the campaign server. Please try again.");
       return;
     }
+    if (window.submitToAirtable) window.submitToAirtable('pledge', { ...form, source: 'home_counter' });
     setSubmitting(false);
     showToast('Pledge recorded. Welcome to the team.');
     setForm({ first_name: '', last_name: '', email: '', phone: '' });
