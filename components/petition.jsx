@@ -64,6 +64,7 @@ function PetitionPage({ data, showToast }) {
       showToast("Couldn't reach the campaign server. Please try again.");
       return;
     }
+    if (window.submitToAirtable) window.submitToAirtable('pledge', { ...form, source: 'petition' });
     setRecent([(form.first_name || '').trim() || 'Anonymous', ...recent]);
     setCount(c => c + 1);
     setPledged(true);

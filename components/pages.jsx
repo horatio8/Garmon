@@ -44,6 +44,14 @@ function VolunteerPage({ data, showToast }) {
       showToast("Couldn't reach the campaign server. Please try again.");
       return;
     }
+    if (window.submitToAirtable) window.submitToAirtable('volunteer', {
+      full_name: form.name,
+      email: form.email,
+      phone: form.phone,
+      zip: form.zip,
+      anything_else: form.notes,
+      interests: Object.keys(picked).filter(k => picked[k]),
+    });
     setSubmitting(false);
     const n = Object.values(picked).filter(Boolean).length;
     showToast(`Welcome aboard. We'll be in touch about your ${n} interest area${n === 1 ? '' : 's'}.`);
@@ -473,6 +481,7 @@ function ContactPage({ data, showToast }) {
       (showToast || (() => {}))("Couldn't reach the campaign server. Please try again.");
       return;
     }
+    if (window.submitToAirtable) window.submitToAirtable('contact', form);
     setSubmitting(false);
     (showToast || (() => {}))('Thanks. The campaign team will reply soon.');
     navigate('/');
@@ -609,6 +618,7 @@ function EarlyVotingSignup({ showToast }) {
       (showToast || (() => {}))("Couldn't reach the campaign server. Please try again.");
       return;
     }
+    if (window.submitToAirtable) window.submitToAirtable('pledge', { ...form, source: 'early_voting' });
     setSubmitting(false);
     setDone(true);
     (showToast || (() => {}))('Thanks for signing up. Welcome to the team.');
